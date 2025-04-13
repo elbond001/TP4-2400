@@ -14,8 +14,10 @@ int main() {
     Architect alice("Alice Dupont");
     Engineer bob("Bob Martin");
     Manager charlie("Charlie Durand");
-    User eva("Eve Moreau");
+    User eva("Eva Moreau");
     User david("David Leroy");
+    User fiona("Fiona Leclerc");
+    Engineer greg("Greg Morel");
 
     // 3) Associer les utilisateurs à alpha
     alpha.addUser(&alice);
@@ -24,7 +26,6 @@ int main() {
 
     beta.addUser(&alice);
     beta.addUser(&bob);
-    beta.addUser(&charlie);
     beta.addUser(&david);
 
     // 4) Ajouter des éléments (Mur1, Porte1, Porte2) 
@@ -61,12 +62,28 @@ int main() {
 
     beta.addRule(&mur2, "Contraintes de charge");
 
-    //Alice doit de désinscrire des notifications
+    beta.detach(&alice);
 
     ModificationProposal prop2(&beta, &bob, "PropositionBeta");
     bob.requestValidation(&prop2);
 
     charlie.rejectProposal(&prop2);
+
+    Project alphaCopy(alpha, "ProjectAlphaCopy");
+
+    alphaCopy.addUser(&charlie);
+    alphaCopy.addUser(&fiona);
+    alphaCopy.addUser(&greg);
+
+    Wall mur3("Mur3");
+    alphaCopy.addElement(&mur3);
+
+    alphaCopy.addRule(&mur3, "Estimation des couts");
+
+    ModificationProposal prop3(&alphaCopy, &greg, "PropositionAlphaCopy");
+    greg.requestValidation(&prop3);
+
+    charlie.acceptProposal(&prop3);
 
     return 0;
 }

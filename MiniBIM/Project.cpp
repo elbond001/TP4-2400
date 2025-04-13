@@ -10,14 +10,36 @@ Project::Project(const std::string& name)
     std::cout << "Projet " << name << " est cree" << std::endl;
 }
 
+Project::Project(const Project& projet, const std::string& name)
+{
+    this->name = name;
+    //this->users = projet.getUsers();
+    this->elements = projet.getElements();
+    //this->observers = projet.getObservers();
+
+    std::cout << "Projet " << name << " est cree par copie" << std::endl;
+}
+
 const std::string& Project::getName() const {
     return name;
+}
+
+const std::vector<User*>& Project::getUsers() const {
+    return users;
+}
+
+const std::vector<IElement*> Project::getElements() const {
+    return elements;
+}
+
+const std::vector<User*> Project::getObservers() const {
+    return observers;
 }
 
 void Project::addUser(User* user) {
     users.push_back(user);
 
-    // Automatiquement attacher ce user au notifications, si on veut
+    // Automatiquement attacher ce user aux notifications, si on veut
     // On suppose ici que tout user ajouté au projet veut recevoir les notifications
     attach(user);
     std::cout << user->getName() 

@@ -24,8 +24,12 @@ private:
 
 public:
     Project(const std::string& name);
+    Project(const Project& projet, const std::string& name);
 
     const std::string& getName() const;
+    const std::vector<User*>& getUsers() const;
+    const std::vector<IElement*> getElements() const;
+    const std::vector<User*> getObservers() const;
 
     // Méthodes de base
     void addUser(User* user);
