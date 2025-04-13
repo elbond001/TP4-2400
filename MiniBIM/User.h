@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 #include "ModificationProposal.h"
 class ModificationProposal;
 
@@ -48,5 +49,20 @@ class Manager : public User {
         void acceptProposal(ModificationProposal* proposal);
         void rejectProposal(ModificationProposal* proposal);
     };
+
+
+
+// Fabrique des users
+    
+enum class UserType {
+    ARCHITECT,
+    ENGINEER,
+    MANAGER
+};
+
+class UserFactory {
+public:
+    static User* createUser(UserType type, const std::string& name);
+};
 
 #endif

@@ -29,3 +29,16 @@ void Manager::acceptProposal(ModificationProposal* proposal) {
 void Manager::rejectProposal(ModificationProposal* proposal) {
     proposal->reject(this);
 }
+
+User* UserFactory::createUser(UserType type, const std::string& name) {
+    switch (type) {
+        case UserType::ARCHITECT:
+            return new Architect(name);
+        case UserType::ENGINEER:
+            return new Engineer(name);
+        case UserType::MANAGER:
+            return new Manager(name);
+        default:
+            return nullptr;
+    }
+}
