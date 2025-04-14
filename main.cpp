@@ -3,7 +3,11 @@
 #include "./MiniBIM/User.h"
 #include "./MiniBIM/ElementTypes.h"
 #include "./MiniBIM/ModificationProposal.h"
-
+#include "./MiniBIM/AddElementCommand.h"
+#include "./MiniBIM/RuleDecorator.h"
+#include "./MiniBIM/CompositeElement.h"
+#include "./MiniBIM/CommandManager.h"
+#include "./MiniBIM/DeleteElementCommand.h"
 
 int main() {
     // 1) Créer les projets
@@ -88,5 +92,104 @@ int main() {
     if(Manager* manager = dynamic_cast<Manager*>(charlie))
         manager->acceptProposal(&prop3);
 
+
+    // 1. Test du decorator
+    // On crée une porte "Porte4" puis on l'enrobe d'une règle "Simulation de performance energetique"
+    Door porte4("Porte4");
+    RuleDecorator decoratedPorte(&porte4, "Simulation de performance energetique");
+    // Affichage pour vérifier
+    std::cout << "L'element " << decoratedPorte.getElementType() << " ("
+            << decoratedPorte.getName() << ") est enrobe de la regle ["
+            << decoratedPorte.getRule() << "]." << std::endl;
+
+    // 2. Test du composite
+    CompositeElement salle("Salle1");
+    salle.add(&mur1);
+    salle.add(&porte1);
+    std::cout << "Composite cree : " << salle.getName() << " (" << salle.getElementType() << ")" << std::endl;
+
+    // 3. Test du Command
+    AddElementCommand addCmd(&alpha, &porte4);
+    addCmd.execute();  // Ceci ajoute Porte4 dans ProjectAlpha
+    // ... et ensuite on peut annuler
+    addCmd.undo();
+    // Par exemple, prenons ProjectAlpha et une nouvelle porte "Porte5"
+    Door porte5("Porte5");
+
+    // Créons une commande pour ajouter Porte5 dans ProjectAlpha
+    CommandManager cmdManager;
+    AddElementCommand* addPorte5 = new AddElementCommand(&alpha, &porte5);
+    
+    // Exécuter la commande via le gestionnaire
+    cmdManager.executeCommand(addPorte5);
+
+    // Affichage immédiat pour vérifier l'ajout :
+    // (Dans la sortie, on devrait voir "Element Door (Porte5) a ete ajoute a la maquette du project ProjectAlpha")
+    
+    // Maintenant, on effectue un undo pour annuler l'ajout
+    cmdManager.undoLastCommand();  // Ceci doit retirer Porte5 de ProjectAlpha
+
+    // Tu peux aussi tester d'autres commandes et faire plusieurs undo...
+    // Test avancé du CommandManager :
+    // Création d'une nouvelle porte "Porte6" pour le projet alpha.
+    Door porte6("Porte6");
+
+    // Création d'un gestionnaire de commandes.
+
+
+    // 1. Commande pour ajouter Porte6 à ProjectAlpha (alpha est créé plus tôt)
+    AddElementCommand* addPorte6 = new AddElementCommand(&alpha, &porte6);
+    cmdManager.executeCommand(addPorte6);  
+    // Ce qui doit afficher : "Element Door (Porte6) a ete ajoute a la maquette du project ProjectAlpha"
+
+    // 2. Commande pour supprimer Porte6 de ProjectAlpha.
+    DeleteElementCommand* delPorte6 = new DeleteElementCommand(&alpha, &porte6);
+    cmdManager.executeCommand(delPorte6);  
+    // Cela devrait retirer Porte6 et afficher le message associé.
+
+    // 3. Faire un undo de la dernière commande (qui devrait réinsérer Porte6).
+    cmdManager.undoLastCommand();
+    // Devrait afficher un message indiquant que Porte6 a été ré-ajoutée.
+
+    // 4. Faire un undo de la commande précédente (qui devrait annuler l'ajout initial de Porte6).
+    cmdManager.undoLastCommand();
+    // -------------------------------
+    // Test avancé du Composite
+    // -------------------------------
+
+    // 1. Création de nouveaux éléments "Mur4" et "Plancher1"
+    Wall mur4("Mur4");
+    // Pour cet exemple, nous utilisons Door pour "Plancher1" (ou, si tu as un type spécifique, utilise-le)
+    Door plancher1("Plancher1");
+
+    // 2. Combiner Mur1 et Mur4 en un composite "Cloisonnement"
+    // Remarque : 'mur1' a déjà été créé et ajouté au projet alpha précédemment.
+    CompositeElement cloisonnement("Cloisonnement");
+    cloisonnement.add(&mur1);
+    cloisonnement.add(&mur4);
+    std::cout << "Composite 'Cloisonnement' cree : " 
+              << cloisonnement.getName() << " (" 
+              << cloisonnement.getElementType() << ")" << std::endl;
+
+    // 3. Combiner Porte1, Plancher1 et Cloisonnement en "Structure murale"
+    CompositeElement structureMurale("Structure murale");
+    structureMurale.add(&porte1);
+    structureMurale.add(&plancher1);
+    structureMurale.add(&cloisonnement);
+    std::cout << "Composite 'Structure murale' cree : " 
+              << structureMurale.getName() << " (" 
+              << structureMurale.getElementType() << ")" << std::endl;
+
+    // 4. Dissocier Plancher1 de "Structure murale" (supprimer plancher1 du composite)
+    structureMurale.remove(&plancher1);
+    std::cout << "Plancher1 dissocie de 'Structure murale'" << std::endl;
+
+    // 5. Combiner Plancher1 et Structure murale en "Salle1"
+    CompositeElement salle1("Salle1");
+    salle1.add(&structureMurale);
+    salle1.add(&plancher1);
+    std::cout << "Composite 'Salle1' cree : " 
+              << salle1.getName() << " (" 
+              << salle1.getElementType() << ")" << std::endl;
     return 0;
 }

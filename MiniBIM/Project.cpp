@@ -2,7 +2,7 @@
 #include "User.h"
 #include "Element.h"
 #include <algorithm> // std::find
-
+#include "RuleDecorator.h"
 
 Project::Project(const std::string& name)
     : name(name)
@@ -80,11 +80,24 @@ void Project::removeElement(IElement* elem) {
     }
 }
 void Project::addRule(IElement* element, const std::string& ruleName) {
-    // "Regle [Isolation] est ajoutee a l'element Door (Porte1) !"
-    std::cout << "Regle [" << ruleName << "] est ajoutee a l'element "
-              << element->getElementType() 
-              << " (" << element->getName() << ") !"
-              << std::endl;
+    // Rechercher l'élément dans le vecteur 'elements'
+    auto it = std::find(elements.begin(), elements.end(), element);
+    if (it != elements.end()) {
+        // Créer un décorateur qui enrobe l'élément
+        IElement* decoratedElement = new RuleDecorator(element, ruleName);
+        
+        // Remplacer l'élément original par la version décorée dans la liste
+        *it = decoratedElement;
+        
+        // Affichage : le message final inclut maintenant le fait que l'élément est décoré
+        std::cout << "L'element " 
+                  << decoratedElement->getElementType() 
+                  << " (" << decoratedElement->getName() 
+                  << ") est enrobe de la regle [" << ruleName << "]." << std::endl;
+    } else {
+        std::cout << "L'element " << element->getName() << " n'a pas ete trouve dans le project " 
+                  << name << std::endl;
+    }
 }
 // ========================
 // Méthodes IObservable
