@@ -29,6 +29,6 @@ $(TARGET): $(OBJS)
 
 # Nettoyer les fichiers objets et l'exécutable
 clean:
-	del /Q *.o $(TARGET).exe
+	del /Q *.o $(TARGET).exe MiniBim\*.o
 
 .PHONY: all clean

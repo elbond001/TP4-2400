@@ -3,6 +3,12 @@
 ModificationProposal::ModificationProposal(Project* proj, User* sub, const std::string& t)
     : project(proj), submitter(sub), title(t)
 {
+    status = ProposalStatus::PENDING;
+}
+
+void ModificationProposal::addCommand(std::shared_ptr<Command> command) {
+    command->setCommandProposalName(title);
+    commandList.push_back(command);
 }
 
 // Quand l'ingénieur (ou l'architecte) demande la validation
@@ -13,18 +19,31 @@ void ModificationProposal::requestValidation() {
 
 // Quand le manager accepte
 void ModificationProposal::accept(User* manager) {
-    // "Le manager Charlie Durand a accepte la modification du project ProjectAlpha."
+    if (status != ProposalStatus::PENDING) 
+        return;
+
     project->notifyAll("Le manager " + manager->getName()
                        + " a accepte la modification du project "
                        + project->getName() + ".");
+
+     for (std::shared_ptr<Command> cmd : commandList)
+     {
+        project->getCommandManager()->executeCommand(cmd);
+     }
+    
+    status = ProposalStatus::ACCEPTED;
 }
 
 // Quand le manager rejette
 void ModificationProposal::reject(User* manager) {
-    // "Le manager Charlie Durand a rejete la modification du project ProjectAlpha."
+    if (status != ProposalStatus::PENDING) 
+        return;
+
     project->notifyAll("Le manager " + manager->getName()
                        + " a rejete la modification du project "
                        + project->getName() + ".");
+    
+    status = ProposalStatus::REJECTED;
 }
 
 Project* ModificationProposal::getProject() const {
@@ -35,4 +54,8 @@ User* ModificationProposal::getSubmitter() const {
 }
 std::string ModificationProposal::getTitle() const {
     return title;
+}
+
+ProposalStatus ModificationProposal::getStatus() const { 
+    return status; 
 }
