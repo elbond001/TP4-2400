@@ -13,6 +13,7 @@ public:
     virtual ~AddElementCommand();
     virtual void execute() override;
     virtual void undo() override;
+    
     virtual std::string getDescription() override;
 };
 

@@ -19,5 +19,5 @@ void DeleteElementCommand::undo() {
 }
 
 std::string DeleteElementCommand::getDescription() {
-    return ("[" + commandProposalName + "] " + "Retrait : " + element->getElementType() + " " + "(" + element->getName() + ")");
+    return ("Retrait : " + element->getElementType() + " " + "(" + element->getName() + ")");
 }

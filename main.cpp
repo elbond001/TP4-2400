@@ -1,3 +1,6 @@
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+
 #include <iostream>
 #include "./MiniBIM/Project.h"
 #include "./MiniBIM/User.h"
@@ -9,38 +12,53 @@
 #include "./MiniBIM/CommandManager.h"
 #include "./MiniBIM/DeleteElementCommand.h"
 
-int main() {
+int main()
+{
+
     // 1) Créer les projets
+
+    int *x = (int *)malloc(sizeof(int));
+
+    *x = 7;
+
+    printf("%d\n", *x);
+
+    x = (int *)calloc(3, sizeof(int));
+    x[0] = 7;
+    x[1] = 77;
+    x[2] = 777;
+
     Project alpha("ProjectAlpha");
     Project beta("ProjectBeta");
 
-    User* alice = UserFactory::createUser(UserType::ARCHITECT, "Alice Dupont");
-    User* bob = UserFactory::createUser(UserType::ENGINEER, "Bob Matrin");
-    User* charlie = UserFactory::createUser(UserType::MANAGER, "Charlie Durand");
-    User* eva = new User("Eva Moreau");
-    User* david = new User("David Leroy");
-    User* fiona = new User("Fiona Leclerc");
-    User* greg = UserFactory::createUser(UserType::ENGINEER, "Greg Morel");
-
+    User *alice = UserFactory::createUser(UserType::ARCHITECT, "Alice Dupont");
+    User *bob = UserFactory::createUser(UserType::ENGINEER, "Bob Matrin");
+    User *charlie = UserFactory::createUser(UserType::MANAGER, "Charlie Durand");
+    User *eva = new User("Eva Moreau");
+    User *david = new User("David Leroy");
+    User *fiona = new User("Fiona Leclerc");
+    User *greg = UserFactory::createUser(UserType::ENGINEER, "Greg Morel");
 
     alpha.addUser(alice);
     alpha.addUser(bob);
     alpha.addUser(charlie);
 
     Wall mur1("Mur1");
-    
+
     Door porte1("Porte1");
 
     Door porte2("Porte2");
-    
+
     ModificationProposal prop1(&alpha, bob, "PropositionAlpha");
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &mur1));
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte1));
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte2));
 
+    prop1.showCommands();
+
     alpha.showCommandHistory();
 
-    if(Manager* manager = dynamic_cast<Manager*>(charlie))
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
         manager->acceptProposal(&prop1);
 
     alpha.showCommandHistory();
@@ -49,6 +67,9 @@ int main() {
 
     alpha.showCommandHistory();
 
+    std::cout << std::endl;
+
+    
 
     /* beta.addUser(alice);
     beta.addUser(bob);
@@ -130,9 +151,9 @@ int main() {
 
     AddElementCommand addCmd(&alpha, &porte4);
     addCmd.execute();
-  
+
     addCmd.undo();
- 
+
     Door porte5("Porte5");
 
     alpha.addElement(&porte5);
@@ -144,12 +165,12 @@ int main() {
 
     // 1. Commande pour ajouter Porte6 à ProjectAlpha (alpha est créé plus tôt)
     AddElementCommand* addPorte6 = new AddElementCommand(&alpha, &porte6);
-    cmdManager.executeCommand(addPorte6);  
+    cmdManager.executeCommand(addPorte6);
     // Ce qui doit afficher : "Element Door (Porte6) a ete ajoute a la maquette du project ProjectAlpha"
 
     // 2. Commande pour supprimer Porte6 de ProjectAlpha.
     DeleteElementCommand* delPorte6 = new DeleteElementCommand(&alpha, &porte6);
-    cmdManager.executeCommand(delPorte6);  
+    cmdManager.executeCommand(delPorte6);
     // Cela devrait retirer Porte6 et afficher le message associé.
 
     // 3. Faire un undo de la dernière commande (qui devrait réinsérer Porte6).
@@ -172,8 +193,8 @@ int main() {
     CompositeElement cloisonnement("Cloisonnement");
     cloisonnement.add(&mur1);
     cloisonnement.add(&mur4);
-    std::cout << "Composite 'Cloisonnement' cree : " 
-              << cloisonnement.getName() << " (" 
+    std::cout << "Composite 'Cloisonnement' cree : "
+              << cloisonnement.getName() << " ("
               << cloisonnement.getElementType() << ")" << std::endl;
 
     // 3. Combiner Porte1, Plancher1 et Cloisonnement en "Structure murale"
@@ -181,8 +202,8 @@ int main() {
     structureMurale.add(&porte1);
     structureMurale.add(&plancher1);
     structureMurale.add(&cloisonnement);
-    std::cout << "Composite 'Structure murale' cree : " 
-              << structureMurale.getName() << " (" 
+    std::cout << "Composite 'Structure murale' cree : "
+              << structureMurale.getName() << " ("
               << structureMurale.getElementType() << ")" << std::endl;
 
     // 4. Dissocier Plancher1 de "Structure murale" (supprimer plancher1 du composite)
@@ -193,8 +214,10 @@ int main() {
     CompositeElement salle1("Salle1");
     salle1.add(&structureMurale);
     salle1.add(&plancher1);
-    std::cout << "Composite 'Salle1' cree : " 
-              << salle1.getName() << " (" 
+    std::cout << "Composite 'Salle1' cree : "
+              << salle1.getName() << " ("
               << salle1.getElementType() << ")" << std::endl; */
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    _CrtDumpMemoryLeaks();
     return 0;
 }

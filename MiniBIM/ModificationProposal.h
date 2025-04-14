@@ -34,6 +34,7 @@ class ModificationProposal {
         User* getSubmitter() const;
         std::string getTitle() const;
         ProposalStatus getStatus() const;
+        void showCommands();
     };
     
     #endif

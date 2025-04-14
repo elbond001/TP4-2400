@@ -21,6 +21,7 @@ public:
     void setCommandProposalName(const std::string& name);
     void setProject(Project* p);
     Project* getProject() const;
+    const std::string getProposalName() const;
 };
 
 #endif

@@ -15,3 +15,7 @@ void Command::setProject(Project* p) {
 Project* Command::getProject() const { 
     return project; 
 }
+
+const std::string Command::getProposalName() const {
+    return commandProposalName;
+}

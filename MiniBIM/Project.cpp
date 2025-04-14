@@ -44,12 +44,14 @@ CommandManager* Project::getCommandManager() {
     return &commandManager;
 }
 
+
+
 void Project::showCommandHistory() {
 
     std::cout << "Historique du projet '" << name << "' :" << std::endl;
 
     for(auto element : commandManager.getCommandHistory()) {
-        std::cout << "  " << element->getDescription() << std::endl;
+        std::cout << "  " << "[" + element->getProposalName() + "] " << element->getDescription() << std::endl;
     }
 }
 
