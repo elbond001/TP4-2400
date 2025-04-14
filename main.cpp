@@ -27,7 +27,30 @@ int main() {
     alpha.addUser(bob);
     alpha.addUser(charlie);
 
-    beta.addUser(alice);
+    Wall mur1("Mur1");
+    
+    Door porte1("Porte1");
+
+    Door porte2("Porte2");
+    
+    ModificationProposal prop1(&alpha, bob, "PropositionAlpha");
+    prop1.addCommand(std::make_shared<AddElementCommand>(&mur1));
+    prop1.addCommand(std::make_shared<AddElementCommand>(&porte1));
+    prop1.addCommand(std::make_shared<AddElementCommand>(&porte2));
+
+    alpha.showCommandHistory();
+
+    if(Manager* manager = dynamic_cast<Manager*>(charlie))
+        manager->acceptProposal(&prop1);
+
+    alpha.showCommandHistory();
+
+    alpha.undoLastCommand();
+
+    alpha.showCommandHistory();
+
+
+    /* beta.addUser(alice);
     beta.addUser(bob);
     beta.addUser(david);
 
@@ -92,47 +115,28 @@ int main() {
     if(Manager* manager = dynamic_cast<Manager*>(charlie))
         manager->acceptProposal(&prop3);
 
-
-    // 1. Test du decorator
-    // On crée une porte "Porte4" puis on l'enrobe d'une règle "Simulation de performance energetique"
     Door porte4("Porte4");
     RuleDecorator decoratedPorte(&porte4, "Simulation de performance energetique");
-    // Affichage pour vérifier
+
     std::cout << "L'element " << decoratedPorte.getElementType() << " ("
             << decoratedPorte.getName() << ") est enrobe de la regle ["
             << decoratedPorte.getRule() << "]." << std::endl;
 
-    // 2. Test du composite
     CompositeElement salle("Salle1");
     salle.add(&mur1);
     salle.add(&porte1);
     std::cout << "Composite cree : " << salle.getName() << " (" << salle.getElementType() << ")" << std::endl;
 
-    // 3. Test du Command
+
     AddElementCommand addCmd(&alpha, &porte4);
-    addCmd.execute();  // Ceci ajoute Porte4 dans ProjectAlpha
-    // ... et ensuite on peut annuler
+    addCmd.execute();
+  
     addCmd.undo();
-    // Par exemple, prenons ProjectAlpha et une nouvelle porte "Porte5"
+ 
     Door porte5("Porte5");
 
-    // Créons une commande pour ajouter Porte5 dans ProjectAlpha
     alpha.addElement(&porte5);
-    //CommandManager cmdManager;
-    //AddElementCommand* addPorte5 = new AddElementCommand(&alpha, &porte5);
-    
-    // Exécuter la commande via le gestionnaire
-    //cmdManager.executeCommand(addPorte5);
 
-    // Affichage immédiat pour vérifier l'ajout :
-    // (Dans la sortie, on devrait voir "Element Door (Porte5) a ete ajoute a la maquette du project ProjectAlpha")
-    
-    // Maintenant, on effectue un undo pour annuler l'ajout
-    cmdManager.undoLastCommand();  // Ceci doit retirer Porte5 de ProjectAlpha
-
-    // Tu peux aussi tester d'autres commandes et faire plusieurs undo...
-    // Test avancé du CommandManager :
-    // Création d'une nouvelle porte "Porte6" pour le projet alpha.
     Door porte6("Porte6");
 
     // Création d'un gestionnaire de commandes.
@@ -191,6 +195,6 @@ int main() {
     salle1.add(&plancher1);
     std::cout << "Composite 'Salle1' cree : " 
               << salle1.getName() << " (" 
-              << salle1.getElementType() << ")" << std::endl;
+              << salle1.getElementType() << ")" << std::endl; */
     return 0;
 }

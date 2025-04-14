@@ -1,31 +1,24 @@
 #include "CommandManager.h"
 #include <iostream>
 
-CommandManager::~CommandManager() {
-    // On s'assure de libérer toutes les commandes stockées
-    while (!commandStack.empty()) {
-        delete commandStack.top();
-        commandStack.pop();
-    }
-}
+CommandManager::~CommandManager() = default;
 
-void CommandManager::executeCommand(Command* command) {
+void CommandManager::executeCommand(std::shared_ptr<Command> command) {
     command->execute();
-    commandStack.push(command);
+    commandHistory.push_back(command);
 }
 
 void CommandManager::undoLastCommand() {
-    if (!commandStack.empty()) {
-        Command* command = commandStack.top();
+    if (!commandHistory.empty()) {
+        std::shared_ptr<Command> command = commandHistory.back();
         command->undo();
-        commandStack.pop();
-        delete command;
+        commandHistory.pop_back();
     } else {
         std::cout << "Aucune commande à annuler." << std::endl;
     }
 }
 
-std::stack<Command*> CommandManager::getCommandHistory() {
-    return this->commandStack;
+std::vector<std::shared_ptr<Command>> CommandManager::getCommandHistory() {
+    return this->commandHistory;
 }
 

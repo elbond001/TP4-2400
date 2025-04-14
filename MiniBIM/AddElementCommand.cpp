@@ -1,16 +1,16 @@
 #include "AddElementCommand.h"
 
-AddElementCommand::AddElementCommand(std::vector<IElement*>* elements, IElement* elem)
-    : elements(elements), element(elem)
-{
-}
+AddElementCommand::AddElementCommand(IElement* elem)
+: element(elem)
+{}
 
 AddElementCommand::~AddElementCommand() {
     // Si vous êtes propriétaire de l'élément, pensez à le supprimer ici (attention aux allocations)
 }
 
 void AddElementCommand::execute() {
-    elements->push_back(element);
+    project->addElement(element);
+    //elements->push_back(element);
 }
 
 void AddElementCommand::undo() {
@@ -18,5 +18,9 @@ void AddElementCommand::undo() {
     //if (it != elements->end()) {
     //    elements->erase(it);
     //}
-    elements->pop_back();
+    project->removeElement(element);
+}
+
+std::string AddElementCommand::getDescription() {
+    return ("[" + commandProposalName + "] " + "Ajout : " + element->getElementType() + " " + "(" + element->getName() + ")");
 }

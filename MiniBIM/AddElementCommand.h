@@ -7,13 +7,13 @@
 
 class AddElementCommand : public Command {
 private:
-    std::vector<IElement*>* elements;
     IElement* element;
 public:
-    AddElementCommand(std::vector<IElement*>* elements, IElement* elem);
+    AddElementCommand(IElement* elem);
     virtual ~AddElementCommand();
     virtual void execute() override;
     virtual void undo() override;
+    virtual std::string getDescription() override;
 };
 
 #endif

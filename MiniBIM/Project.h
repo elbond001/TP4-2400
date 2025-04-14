@@ -7,6 +7,7 @@
 #include "CommandManager.h"
 #include "AddElementCommand.h"
 #include "DeleteElementCommand.h"
+#include "ModificationProposal.h"
 #include <iostream>
 
 // Forward declarations
@@ -18,6 +19,7 @@ private:
     std::string name;
     std::vector<User*> users;     // Les utilisateurs du projet
     std::vector<IElement*> elements;
+    std::vector<ModificationProposal*> proposals;
     
     CommandManager commandManager;
 
@@ -35,7 +37,10 @@ public:
     const std::vector<User*>& getUsers() const;
     const std::vector<IElement*> getElements() const;
     const std::vector<User*> getObservers() const;
-    const std::stack<Command*> getCommandHistory() const;
+    std::vector<ModificationProposal*>* getProposals();
+    CommandManager* getCommandManager();
+
+    void showCommandHistory();
 
     // Méthodes de base
     void addUser(User* user);

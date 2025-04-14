@@ -3,30 +3,37 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "User.h"
 #include "Project.h"
+#include "CommandManager.h"
 
 class Project;
 class IElement;
 
+enum class ProposalStatus { PENDING, ACCEPTED, REJECTED };
+
 class ModificationProposal {
     private:
         Project* project;
-        User* submitter;    // Ex. l'ingénieur
-        std::string title;  // Ex. "Isolation Porte1"
+        User* submitter;
+        std::string title;
+        std::vector<std::shared_ptr<Command>> commandList;
+        ProposalStatus status;
     
     public:
-        // Constructeur
         ModificationProposal(Project* proj, User* submitter, const std::string& title);
+
+        void addCommand(std::shared_ptr<Command> command);
     
         void requestValidation();
         void accept(User* manager);
         void reject(User* manager);
     
-        // Getters
         Project* getProject() const;
         User* getSubmitter() const;
         std::string getTitle() const;
+        ProposalStatus getStatus() const;
     };
     
     #endif

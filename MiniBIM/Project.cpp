@@ -36,8 +36,21 @@ const std::vector<User*> Project::getObservers() const {
     return observers;
 }
 
-const std::stack<Command*> Project::getCommandHistory() const {
-    return commandManager.getCommandHistory();
+std::vector<ModificationProposal*>* Project::getProposals() {
+    return &proposals;
+}
+
+CommandManager* Project::getCommandManager() {
+    return &commandManager;
+}
+
+void Project::showCommandHistory() {
+
+    std::cout << "Historique du projet '" << name << "' :" << std::endl;
+
+    for(auto element : commandManager.getCommandHistory()) {
+        std::cout << "  " << element->getDescription() << std::endl;
+    }
 }
 
 void Project::addUser(User* user) {
@@ -59,16 +72,19 @@ void Project::removeUser(User* user) {
     detach(user);
 }
 
-void Project::addElement(IElement* elem) {
-    commandManager.executeCommand(new AddElementCommand(&this->elements, elem));
+void Project::addElement(IElement* element) {
+    this->elements.push_back(element);
 }
 
-void Project::removeElement(IElement* elem) {
-    commandManager.executeCommand(new DeleteElementCommand(&this->elements, elem));
+void Project::removeElement(IElement* element) {
+    auto it = std::find(elements.begin(), elements.end(), element);
+    if (it != elements.end()) {
+        elements.erase(it);
+    }
 }
 
 void Project::undoLastCommand() {
-    commandManager.getCommandHistory().pop()
+    commandManager.undoLastCommand();
 }
 
 void Project::addRule(IElement* element, const std::string& ruleName) {
