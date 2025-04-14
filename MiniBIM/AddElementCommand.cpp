@@ -1,7 +1,7 @@
 #include "AddElementCommand.h"
 
-AddElementCommand::AddElementCommand(Project* proj, IElement* elem)
-    : project(proj), element(elem)
+AddElementCommand::AddElementCommand(std::vector<IElement*>* elements, IElement* elem)
+    : elements(elements), element(elem)
 {
 }
 
@@ -10,9 +10,13 @@ AddElementCommand::~AddElementCommand() {
 }
 
 void AddElementCommand::execute() {
-    project->addElement(element);
+    elements->push_back(element);
 }
 
 void AddElementCommand::undo() {
-    project->removeElement(element);
+    //auto it = std::find(elements->begin(), elements->end(), element);
+    //if (it != elements->end()) {
+    //    elements->erase(it);
+    //}
+    elements->pop_back();
 }

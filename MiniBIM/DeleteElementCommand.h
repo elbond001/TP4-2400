@@ -7,10 +7,10 @@
 
 class DeleteElementCommand : public Command {
 private:
-    Project* project;
+    std::vector<IElement*>* elements;
     IElement* element;
 public:
-    DeleteElementCommand(Project* proj, IElement* elem);
+    DeleteElementCommand(std::vector<IElement*>* elements, IElement* elem);
     virtual ~DeleteElementCommand();
     virtual void execute() override;
     virtual void undo() override;

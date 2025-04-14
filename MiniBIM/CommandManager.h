@@ -17,6 +17,8 @@ public:
 
     // Annule la dernière commande exécutée
     void undoLastCommand();
+
+    std::stack<Command*> getCommandHistory();
 };
 
 #endif

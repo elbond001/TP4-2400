@@ -117,11 +117,12 @@ int main() {
     Door porte5("Porte5");
 
     // Créons une commande pour ajouter Porte5 dans ProjectAlpha
-    CommandManager cmdManager;
-    AddElementCommand* addPorte5 = new AddElementCommand(&alpha, &porte5);
+    alpha.addElement(&porte5);
+    //CommandManager cmdManager;
+    //AddElementCommand* addPorte5 = new AddElementCommand(&alpha, &porte5);
     
     // Exécuter la commande via le gestionnaire
-    cmdManager.executeCommand(addPorte5);
+    //cmdManager.executeCommand(addPorte5);
 
     // Affichage immédiat pour vérifier l'ajout :
     // (Dans la sortie, on devrait voir "Element Door (Porte5) a ete ajoute a la maquette du project ProjectAlpha")

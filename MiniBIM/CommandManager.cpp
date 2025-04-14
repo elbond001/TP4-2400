@@ -25,3 +25,7 @@ void CommandManager::undoLastCommand() {
     }
 }
 
+std::stack<Command*> CommandManager::getCommandHistory() {
+    return this->commandStack;
+}
+

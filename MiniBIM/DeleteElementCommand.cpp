@@ -1,8 +1,9 @@
 #include "DeleteElementCommand.h"
 #include <iostream>
+#include <algorithm>
 
-DeleteElementCommand::DeleteElementCommand(Project* proj, IElement* elem)
-    : project(proj), element(elem)
+DeleteElementCommand::DeleteElementCommand(std::vector<IElement*>* elements, IElement* elem)
+    : elements(elements), element(elem)
 {
 }
 
@@ -11,17 +12,12 @@ DeleteElementCommand::~DeleteElementCommand() {
 }
 
 void DeleteElementCommand::execute() {
-    project->removeElement(element);
-    std::cout << "Commande executee: L'element " 
-              << element->getElementType() << " (" << element->getName() 
-              << ") a ete retire de la maquette du project " 
-              << project->getName() << std::endl;
+    auto it = std::find(elements->begin(), elements->end(), element);
+    if (it != elements->end()) {
+        elements->erase(it);
+    }
 }
 
 void DeleteElementCommand::undo() {
-    project->addElement(element);
-    std::cout << "Commande undo: L'element " 
-              << element->getElementType() << " (" << element->getName() 
-              << ") a ete re-ajoute a la maquette du project " 
-              << project->getName() << std::endl;
+    elements->push_back(element);
 }

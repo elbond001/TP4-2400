@@ -36,11 +36,13 @@ const std::vector<User*> Project::getObservers() const {
     return observers;
 }
 
+const std::stack<Command*> Project::getCommandHistory() const {
+    return commandManager.getCommandHistory();
+}
+
 void Project::addUser(User* user) {
     users.push_back(user);
 
-    // Automatiquement attacher ce user aux notifications, si on veut
-    // On suppose ici que tout user ajouté au projet veut recevoir les notifications
     attach(user);
     std::cout << user->getName() 
         << " est ajoute au projet " 
@@ -49,47 +51,34 @@ void Project::addUser(User* user) {
 }
 
 void Project::removeUser(User* user) {
-    // On le retire de la liste users
     auto it = std::find(users.begin(), users.end(), user);
     if (it != users.end()) {
         users.erase(it);
     }
 
-    // On le retire également de la liste observers
     detach(user);
 }
 
 void Project::addElement(IElement* elem) {
-    elements.push_back(elem);
-
-    // On peut notifier tout le monde qu’un élément est ajouté
-    // (Nous verrons ensuite si on veut l’inscrire dans une proposition)
-    // Ex.: notifyAll("Element " + elem->getName() + " a ete ajoute au projet " + name);
-    std::cout << "Element " 
-        << elem->getElementType()
-        << " (" << elem->getName() << ") "
-        << "a ete ajoute a la maquette du project "
-        << this->name
-        << std::endl;
+    commandManager.executeCommand(new AddElementCommand(&this->elements, elem));
 }
 
 void Project::removeElement(IElement* elem) {
-    auto it = std::find(elements.begin(), elements.end(), elem);
-    if (it != elements.end()) {
-        elements.erase(it);
-    }
+    commandManager.executeCommand(new DeleteElementCommand(&this->elements, elem));
 }
+
+void Project::undoLastCommand() {
+    commandManager.getCommandHistory().pop()
+}
+
 void Project::addRule(IElement* element, const std::string& ruleName) {
-    // Rechercher l'élément dans le vecteur 'elements'
     auto it = std::find(elements.begin(), elements.end(), element);
     if (it != elements.end()) {
-        // Créer un décorateur qui enrobe l'élément
+
         IElement* decoratedElement = new RuleDecorator(element, ruleName);
         
-        // Remplacer l'élément original par la version décorée dans la liste
         *it = decoratedElement;
         
-        // Affichage : le message final inclut maintenant le fait que l'élément est décoré
         std::cout << "L'element " 
                   << decoratedElement->getElementType() 
                   << " (" << decoratedElement->getName() 
@@ -103,7 +92,6 @@ void Project::addRule(IElement* element, const std::string& ruleName) {
 // Méthodes IObservable
 // ========================
 void Project::attach(User* observer) {
-    // On s’assure de ne pas le mettre 2x
     auto it = std::find(observers.begin(), observers.end(), observer);
     if (it == observers.end()) {
         observers.push_back(observer);
