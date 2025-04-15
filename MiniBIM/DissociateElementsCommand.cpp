@@ -4,6 +4,11 @@ DissociateElementsCommand::DissociateElementsCommand(Project* p, IElement* elemT
     : Command(p), dissociatedElement(elemToDissociate), compositeElement(compElem)
 {}
 
+DissociateElementsCommand::~DissociateElementsCommand() {
+    delete dissociatedElement;
+    delete compositeElement;
+}
+
 void DissociateElementsCommand::execute()
 {
     compositeElement->remove(dissociatedElement);

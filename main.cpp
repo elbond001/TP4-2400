@@ -11,23 +11,11 @@
 #include "./MiniBIM/CompositeElement.h"
 #include "./MiniBIM/CommandManager.h"
 #include "./MiniBIM/DeleteElementCommand.h"
+#include "./MiniBIM/CombineElementsCommand.h"
+#include "./MiniBIM/DissociateElementsCommand.h"
 
 int main()
 {
-
-    // 1) Créer les projets
-
-    int *x = (int *)malloc(sizeof(int));
-
-    *x = 7;
-
-    printf("%d\n", *x);
-
-    x = (int *)calloc(3, sizeof(int));
-    x[0] = 7;
-    x[1] = 77;
-    x[2] = 777;
-
     Project alpha("ProjectAlpha");
     Project beta("ProjectBeta");
 
@@ -69,7 +57,9 @@ int main()
 
     std::cout << std::endl;
 
-    
+    ModificationProposal prop2(&alpha, bob, "PropositionAlpha2");
+
+    prop2.addCommand(std::make_shared<CombineElementsCommand>(&alpha, &mur1))
 
     /* beta.addUser(alice);
     beta.addUser(bob);

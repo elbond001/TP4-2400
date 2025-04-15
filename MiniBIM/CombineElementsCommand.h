@@ -5,18 +5,20 @@
 #include "Project.h"
 #include "CompositeElement.h"
 
-class CombineElementsCommand : public Command {
+class CombineElementsCommand : public Command
+{
 private:
-    IElement* element1;
-    IElement* element2;
+    IElement *element1;
+    IElement *element2;
     CompositeElement *newCombinedElement;
-    std::string CombineElementsName;
+    std::string combineElementsName;
+
 public:
-    CombineElementsCommand(Project* p, IElement* elem1, IElement* elem2, std::string combinedElementsName);
+    CombineElementsCommand(Project *p, IElement *elem1, IElement *elem2, std::string combinedElementsName);
     virtual ~CombineElementsCommand();
     virtual void execute() override;
     virtual void undo() override;
-    
+
     virtual std::string getDescription() override;
 };
 
