@@ -7,10 +7,11 @@ class RemoveRuleCommand : public Command {
 private:
     Rule* rule;
     IElement* decoratedElement;
-    IElement* restoredElement;  // pour undo
+    IElement* restoredElement;
 
 public:
     RemoveRuleCommand(Project* project, IElement* elementWithRule, Rule* rule);
     void execute() override;
     void undo() override;
+    std::string getDescription() override;
 };

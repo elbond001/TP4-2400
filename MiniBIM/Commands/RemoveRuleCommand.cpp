@@ -13,3 +13,7 @@ void RemoveRuleCommand::undo() {
         decoratedElement = project->addRule(restoredElement, rule);
     }
 }
+
+std::string RemoveRuleCommand::getDescription() {
+    return ("Retrait de : " + rule->getName() + " a " + decoratedElement->getName());
+}

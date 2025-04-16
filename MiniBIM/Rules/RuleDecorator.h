@@ -2,14 +2,15 @@
 #define RULEDECORATOR_H
 
 #include "../Element.h"
+#include <memory>
 #include "Rule.h"
 
-class RuleDecorator : public IElement, Rule {
-private:
-    IElement* baseElement;
-    Rule* rule;
-public:
-    RuleDecorator(IElement* element, Rule* rule);
+class RuleDecorator : public IElement, public Rule {
+    private:
+        IElement* baseElement;
+        std::shared_ptr<Rule> rule;
+    public:
+        RuleDecorator(IElement* element, std::shared_ptr<Rule> rule);
     ~RuleDecorator();
 
     std::string getName() const override;
@@ -18,7 +19,7 @@ public:
 
     IElement* getBaseElement() const;
 
-    Rule* getRule() const;
+    std::shared_ptr<Rule> getRule() const;
 };
 
 #endif

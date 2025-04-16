@@ -1,6 +1,6 @@
 #include "RuleDecorator.h"
 
-RuleDecorator::RuleDecorator(IElement* element, Rule* rule)
+RuleDecorator::RuleDecorator(IElement* element, std::shared_ptr<Rule> rule)
     : baseElement(element), rule(rule) {}
 
 RuleDecorator::~RuleDecorator() {}
@@ -13,7 +13,7 @@ std::string RuleDecorator::getElementType() const {
     return baseElement->getElementType();
 }
 
-Rule* RuleDecorator::getRule() const {
+std::shared_ptr<Rule> RuleDecorator::getRule() const {
     return rule;
 }
 

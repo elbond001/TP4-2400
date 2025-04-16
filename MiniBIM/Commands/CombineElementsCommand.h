@@ -14,7 +14,7 @@ private:
     std::string combineElementsName;
 
 public:
-    CombineElementsCommand(Project *p, IElement *elem1, IElement *elem2, std::string combinedElementsName);
+    CombineElementsCommand(Project* p, IElement* elem1, IElement* elem2, CompositeElement* compositeElem);
     virtual ~CombineElementsCommand();
     virtual void execute() override;
     virtual void undo() override;

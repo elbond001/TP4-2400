@@ -8,6 +8,7 @@ public:
     virtual ~Rule() {}
     virtual std::string getName() const = 0;
     virtual std::string getDescription() const = 0;
+    virtual IElement* decorate(IElement* element, std::shared_ptr<Rule> self) const = 0;
 };
 
 #endif

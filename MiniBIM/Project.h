@@ -54,6 +54,8 @@ public:
     void removeElement(IElement* elem);
     void undoLastCommand();
 
+    IElement* findElementByName(const std::string& name);
+
     IElement* addRule(IElement* element, Rule* rule);
     IElement* removeRule(IElement* element, Rule* rule);
     

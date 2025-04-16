@@ -22,6 +22,9 @@ class Wall : public IElement {
         virtual std::string getElementType() const override {
             return "Wall";
         }
+        virtual IElement* clone() const override {
+            return new Wall(name);
+        }
     };
     
     // ================== Door ==================
@@ -39,6 +42,9 @@ class Wall : public IElement {
         }
         virtual std::string getElementType() const override {
             return "Door";
+        }
+        virtual IElement* clone() const override {
+            return new Door(name);
         }
     };
     
@@ -58,6 +64,30 @@ class Wall : public IElement {
         virtual std::string getElementType() const override {
             return "Window";
         }
+        virtual IElement* clone() const override {
+            return new Window(name);
+        }
     };
+
+    class HeatingFloor : public IElement {
+        private:
+            std::string name;
+        public:
+            HeatingFloor(const std::string& name) : name(name) {
+                std::cout << "Element Plancher chauffant (" << name << ") est cree !" << std::endl;
+            }
+            virtual ~HeatingFloor() {}
+        
+            virtual std::string getName() const override {
+                return name;
+            }
+            virtual std::string getElementType() const override {
+                return "Plancher chauffant";
+            }
+            virtual IElement* clone() const override {
+                return new HeatingFloor(name);
+            }
+        };
+
     
     #endif

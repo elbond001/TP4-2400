@@ -13,9 +13,17 @@
 #include "./MiniBIM/Commands/DeleteElementCommand.h"
 #include "./MiniBIM/Commands/CombineElementsCommand.h"
 #include "./MiniBIM/Commands/DissociateElementsCommand.h"
+#include "./MiniBIM/Commands/AddRuleCommand.h"
+#include "./MiniBIM/Commands/RemoveRuleCommand.h"
+#include "./MiniBIM/Rules/ChargeRule.cpp"
+#include "./MiniBIM/Rules/IsolationRule.cpp"
+#include "./MiniBIM/Rules/CostEstimationRule.cpp"
+#include "./MiniBIM/Rules/EnergyPerformanceRule.cpp"
 
 int main()
 {
+
+
     Project alpha("ProjectAlpha");
     Project beta("ProjectBeta");
 
@@ -31,90 +39,78 @@ int main()
     alpha.addUser(bob);
     alpha.addUser(charlie);
 
+    beta.addUser(alice);
+    beta.addUser(bob);
+    beta.addUser(david);
+
+    std::cout << std::endl;
+
     Wall mur1("Mur1");
-
     Door porte1("Porte1");
-
     Door porte2("Porte2");
 
-    ModificationProposal prop1(&alpha, bob, "PropositionAlpha");
+    ModificationProposal prop1(&alpha, alice, "Ajouts Initiaux Alpha");
+
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &mur1));
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte1));
     prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte2));
 
-    prop1.showCommands();
-
-    alpha.showCommandHistory();
+    prop1.requestValidation();
 
     if (Manager *manager = dynamic_cast<Manager *>(charlie))
         manager->acceptProposal(&prop1);
 
-    alpha.showCommandHistory();
+    ModificationProposal prop2(&alpha, bob, "Isolation porte1");
 
-    alpha.undoLastCommand();
-
-    alpha.showCommandHistory();
-
-    std::cout << std::endl;
-
-    ModificationProposal prop2(&alpha, bob, "PropositionAlpha2");
-
-    alpha.showElements();
-    std::cout << std::endl;
-
-    prop2.addCommand(std::make_shared<CombineElementsCommand>(&alpha, &mur1, &porte1, "mur avec porte"));
     
+
+    std::shared_ptr<IsolationRule> rule1 = std::make_shared<IsolationRule>(&porte1);
+    prop2.addCommand(std::make_shared<AddRuleCommand>(&alpha, &porte1, rule1.get()));
+
+    prop2.requestValidation();
+
     if (Manager *manager = dynamic_cast<Manager *>(charlie))
         manager->acceptProposal(&prop2);
 
-    alpha.showElements();
-
-    /* beta.addUser(alice);
-    beta.addUser(bob);
-    beta.addUser(david);
-
-    Wall mur1("Mur1");
-    alpha.addElement(&mur1);
-
-    Door porte1("Porte1");
-    alpha.addElement(&porte1);
-
-    Door porte2("Porte2");
-    alpha.addElement(&porte2);
-
-    alpha.addRule(&porte1, "Isolation");
-
-    ModificationProposal prop1(&alpha, bob, "PropositionAlpha");
-
-    if(Engineer* engineer = dynamic_cast<Engineer*>(bob))
-        engineer->requestValidation(&prop1);
-
-
-    if(Manager* manager = dynamic_cast<Manager*>(charlie))
-        manager->acceptProposal(&prop1);
-
+    std::cout << std::endl;
+    std::cout << std::endl;
 
     Wall mur2("Mur2");
-    beta.addElement(&mur2);
-
     Door porte3("Porte3");
-    beta.addElement(&porte3);
-
     Window fenetre1("Fenetre1");
-    beta.addElement(&fenetre1);
+    
+
+    ModificationProposal prop3(&beta, alice, "Ajouts Initiaux Beta");
+    prop3.addCommand(std::make_shared<AddElementCommand>(&beta, &mur2));
+    prop3.addCommand(std::make_shared<AddElementCommand>(&beta, &porte3));
+    prop3.addCommand(std::make_shared<AddElementCommand>(&beta, &fenetre1));
+
+    prop3.requestValidation();
+
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop3);
+
 
     beta.addUser(eva);
 
-    beta.addRule(&mur2, "Contraintes de charge");
 
-    beta.detach(alice);
+    ModificationProposal prop4(&beta, bob, "Charge Mur2");
 
-    ModificationProposal prop2(&beta, bob, "PropositionBeta");
-    if(Engineer* engineer = dynamic_cast<Engineer*>(bob))
-        engineer->requestValidation(&prop2);
+    auto rule2 = std::make_shared<ChargeRule>(&mur2);
+    prop4.addCommand(std::make_shared<AddRuleCommand>(&beta, &mur2, rule2.get()));
 
-    if(Manager* manager = dynamic_cast<Manager*>(charlie))
-        manager->rejectProposal(&prop2);
+    prop4.showCommands();
+    prop4.requestValidation();
+
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->rejectProposal(&prop4);
+
+    beta.showCommandHistory();
+
+
+
+    std::cout << std::endl;
+
 
     Project alphaCopy(alpha, "ProjectAlphaCopy");
 
@@ -123,99 +119,88 @@ int main()
     alphaCopy.addUser(greg);
 
     Wall mur3("Mur3");
-    alphaCopy.addElement(&mur3);
 
-    alphaCopy.addRule(&mur3, "Estimation des couts");
+    ModificationProposal prop5(&alphaCopy, fiona, "Ajout Mur 3");
+    prop5.addCommand(std::make_shared<AddElementCommand>(&alphaCopy, &mur3));
+    prop5.requestValidation();
 
-    ModificationProposal prop3(&alphaCopy, greg, "PropositionAlphaCopy");
-    if(Engineer* engineer = dynamic_cast<Engineer*>(greg))
-        engineer->requestValidation(&prop3);
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop5);
 
-    if(Manager* manager = dynamic_cast<Manager*>(charlie))
-        manager->acceptProposal(&prop3);
+    ModificationProposal prop6(&alphaCopy, greg, "Estimation couts");
+    std::shared_ptr<CostEstimationRule> rule3 = std::make_shared<CostEstimationRule>(alphaCopy.getElements().front());
+    prop6.addCommand(std::make_shared<AddRuleCommand>(&alphaCopy, alphaCopy.getElements().front(), rule3.get()));
 
-    Door porte4("Porte4");
-    RuleDecorator decoratedPorte(&porte4, "Simulation de performance energetique");
+    prop6.requestValidation();
 
-    std::cout << "L'element " << decoratedPorte.getElementType() << " ("
-            << decoratedPorte.getName() << ") est enrobe de la regle ["
-            << decoratedPorte.getRule() << "]." << std::endl;
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop6);
 
-    CompositeElement salle("Salle1");
-    salle.add(&mur1);
-    salle.add(&porte1);
-    std::cout << "Composite cree : " << salle.getName() << " (" << salle.getElementType() << ")" << std::endl;
+    alphaCopy.showElements();
 
+    alphaCopy.undoLastCommand();
 
-    AddElementCommand addCmd(&alpha, &porte4);
-    addCmd.execute();
+    alphaCopy.showElements();
 
-    addCmd.undo();
+    alpha.showCommandHistory();
 
-    Door porte5("Porte5");
-
-    alpha.addElement(&porte5);
-
-    Door porte6("Porte6");
-
-    // Création d'un gestionnaire de commandes.
-
-
-    // 1. Commande pour ajouter Porte6 à ProjectAlpha (alpha est créé plus tôt)
-    AddElementCommand* addPorte6 = new AddElementCommand(&alpha, &porte6);
-    cmdManager.executeCommand(addPorte6);
-    // Ce qui doit afficher : "Element Door (Porte6) a ete ajoute a la maquette du project ProjectAlpha"
-
-    // 2. Commande pour supprimer Porte6 de ProjectAlpha.
-    DeleteElementCommand* delPorte6 = new DeleteElementCommand(&alpha, &porte6);
-    cmdManager.executeCommand(delPorte6);
-    // Cela devrait retirer Porte6 et afficher le message associé.
-
-    // 3. Faire un undo de la dernière commande (qui devrait réinsérer Porte6).
-    cmdManager.undoLastCommand();
-    // Devrait afficher un message indiquant que Porte6 a été ré-ajoutée.
-
-    // 4. Faire un undo de la commande précédente (qui devrait annuler l'ajout initial de Porte6).
-    cmdManager.undoLastCommand();
-    // -------------------------------
-    // Test avancé du Composite
-    // -------------------------------
-
-    // 1. Création de nouveaux éléments "Mur4" et "Plancher1"
+    HeatingFloor plancher1("Plancher1");
     Wall mur4("Mur4");
-    // Pour cet exemple, nous utilisons Door pour "Plancher1" (ou, si tu as un type spécifique, utilise-le)
-    Door plancher1("Plancher1");
-
-    // 2. Combiner Mur1 et Mur4 en un composite "Cloisonnement"
-    // Remarque : 'mur1' a déjà été créé et ajouté au projet alpha précédemment.
     CompositeElement cloisonnement("Cloisonnement");
     cloisonnement.add(&mur1);
     cloisonnement.add(&mur4);
-    std::cout << "Composite 'Cloisonnement' cree : "
-              << cloisonnement.getName() << " ("
-              << cloisonnement.getElementType() << ")" << std::endl;
 
-    // 3. Combiner Porte1, Plancher1 et Cloisonnement en "Structure murale"
-    CompositeElement structureMurale("Structure murale");
-    structureMurale.add(&porte1);
-    structureMurale.add(&plancher1);
-    structureMurale.add(&cloisonnement);
-    std::cout << "Composite 'Structure murale' cree : "
-              << structureMurale.getName() << " ("
-              << structureMurale.getElementType() << ")" << std::endl;
+    CompositeElement structureMurale("StructureMurale");
+    cloisonnement.add(&cloisonnement);
+    cloisonnement.add(&porte1);
 
-    // 4. Dissocier Plancher1 de "Structure murale" (supprimer plancher1 du composite)
-    structureMurale.remove(&plancher1);
-    std::cout << "Plancher1 dissocie de 'Structure murale'" << std::endl;
-
-    // 5. Combiner Plancher1 et Structure murale en "Salle1"
     CompositeElement salle1("Salle1");
-    salle1.add(&structureMurale);
-    salle1.add(&plancher1);
-    std::cout << "Composite 'Salle1' cree : "
-              << salle1.getName() << " ("
-              << salle1.getElementType() << ")" << std::endl; */
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    _CrtDumpMemoryLeaks();
-    return 0;
+    cloisonnement.add(&structureMurale);
+    cloisonnement.add(&plancher1);
+
+
+    ModificationProposal prop7(&alpha, fiona, "Niveaux d'architecture");
+    prop7.addCommand(std::make_shared<AddElementCommand>(&alphaCopy, &plancher1));
+    prop7.addCommand(std::make_shared<AddElementCommand>(&alphaCopy, &mur4));
+    prop7.addCommand(std::make_shared<DeleteElementCommand>(&alphaCopy, &porte2));
+    prop7.addCommand(std::make_shared<CombineElementsCommand>(&alphaCopy, &mur1, &mur4, &cloisonnement));
+    prop7.addCommand(std::make_shared<CombineElementsCommand>(&alphaCopy, &cloisonnement, &porte1, &structureMurale));
+    prop7.addCommand(std::make_shared<DissociateElementsCommand>(&alphaCopy, &plancher1, &structureMurale));
+    prop7.addCommand(std::make_shared<CombineElementsCommand>(&alphaCopy, &structureMurale, &plancher1, &salle1));
+    
+    
+
+    prop7.showCommands();
+
+    prop7.requestValidation();
+
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop7);
+
+    
+    std::cout << std::endl;
+
+
+    ModificationProposal prop8(&alpha, bob, "PerformancePlancher");
+
+    auto rule4 = std::make_shared<EnergyPerformanceRule>(&plancher1);
+    prop8.addCommand(std::make_shared<AddRuleCommand>(&alphaCopy, &plancher1, rule4.get()));
+
+    prop8.requestValidation();
+
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop8);
+
+    alphaCopy.showElements();
+
+
+    std::cout << std::endl;
+
+
+    alphaCopy.showCommandHistory();
+
+
+//     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//     _CrtDumpMemoryLeaks();
+     return 0;
 }

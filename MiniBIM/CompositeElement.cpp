@@ -39,6 +39,16 @@ std::string CompositeElement::getElementType() const
     return "Composite";
 }
 
+IElement* CompositeElement::clone() const {
+    CompositeElement* copy = new CompositeElement(name);
+
+    for (IElement* component : components) {
+        copy->add(component->clone());
+    }
+
+    return copy;
+}
+
 std::vector<IElement *> CompositeElement::getComponents()
 {
     return components;

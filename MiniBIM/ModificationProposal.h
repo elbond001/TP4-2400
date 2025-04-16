@@ -34,6 +34,8 @@ class ModificationProposal {
         User* getSubmitter() const;
         std::string getTitle() const;
         ProposalStatus getStatus() const;
+        std::vector<std::shared_ptr<Command>> getCommands() const;
+
         void showCommands();
     };
     

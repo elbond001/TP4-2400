@@ -17,3 +17,8 @@ void AddRuleCommand::undo() {
         }
     }
 }
+
+std::string AddRuleCommand::getDescription() {
+    return "Ajout de [" + std::string(rule->getName()) + "] a: " + originalElement->getElementType() +
+           " (" + originalElement->getName() + ")";
+}

@@ -64,6 +64,10 @@ ProposalStatus ModificationProposal::getStatus() const
     return status;
 }
 
+std::vector<std::shared_ptr<Command>> ModificationProposal::getCommands() const {
+    return commandList;
+}
+
 void ModificationProposal::showCommands()
 {
     std::cout << "Proposition '" + title + "' contient :" << std::endl;

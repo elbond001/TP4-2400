@@ -14,4 +14,5 @@ public:
 
     void execute() override;
     void undo() override;
+    std::string getDescription() override;
 };

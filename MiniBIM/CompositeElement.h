@@ -24,6 +24,7 @@ public:
     virtual std::string getName() const override;
     // On peut renvoyer "Composite" ou le type voulu
     virtual std::string getElementType() const override;
+    virtual IElement* clone() const override;
 
     std::vector<IElement*> getComponents();
 };
