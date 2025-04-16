@@ -6,13 +6,13 @@
 #include "./MiniBIM/User.h"
 #include "./MiniBIM/ElementTypes.h"
 #include "./MiniBIM/ModificationProposal.h"
-#include "./MiniBIM/AddElementCommand.h"
-#include "./MiniBIM/RuleDecorator.h"
+#include "./MiniBIM/Commands/AddElementCommand.h"
+#include "./MiniBIM/Rules/RuleDecorator.h"
 #include "./MiniBIM/CompositeElement.h"
-#include "./MiniBIM/CommandManager.h"
-#include "./MiniBIM/DeleteElementCommand.h"
-#include "./MiniBIM/CombineElementsCommand.h"
-#include "./MiniBIM/DissociateElementsCommand.h"
+#include "./MiniBIM/Commands/CommandManager.h"
+#include "./MiniBIM/Commands/DeleteElementCommand.h"
+#include "./MiniBIM/Commands/CombineElementsCommand.h"
+#include "./MiniBIM/Commands/DissociateElementsCommand.h"
 
 int main()
 {
@@ -59,7 +59,15 @@ int main()
 
     ModificationProposal prop2(&alpha, bob, "PropositionAlpha2");
 
-    prop2.addCommand(std::make_shared<CombineElementsCommand>(&alpha, &mur1))
+    alpha.showElements();
+    std::cout << std::endl;
+
+    prop2.addCommand(std::make_shared<CombineElementsCommand>(&alpha, &mur1, &porte1, "mur avec porte"));
+    
+    if (Manager *manager = dynamic_cast<Manager *>(charlie))
+        manager->acceptProposal(&prop2);
+
+    alpha.showElements();
 
     /* beta.addUser(alice);
     beta.addUser(bob);

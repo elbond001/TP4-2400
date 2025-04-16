@@ -2,8 +2,8 @@
 #define DELETEELEMENTCOMMAND_H
 
 #include "Command.h"
-#include "Project.h"
-#include "Element.h"
+#include "../Project.h"
+#include "../Element.h"
 
 class DeleteElementCommand : public Command {
 private:

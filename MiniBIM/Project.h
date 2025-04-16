@@ -3,12 +3,15 @@
 
 #include <string>
 #include <vector>
-#include "IObservable.h"
-#include "CommandManager.h"
-#include "AddElementCommand.h"
-#include "DeleteElementCommand.h"
-#include "ModificationProposal.h"
 #include <iostream>
+#include "IObservable.h"
+#include "./Commands/CommandManager.h"
+#include "./Commands/AddElementCommand.h"
+#include "./Commands/DeleteElementCommand.h"
+#include "ModificationProposal.h"
+#include "./Rules/Rule.h"
+#include "Element.h"
+
 
 // Forward declarations
 class User;
@@ -41,6 +44,7 @@ public:
     CommandManager* getCommandManager();
 
     void showCommandHistory();
+    void showElements();
 
     // Méthodes de base
     void addUser(User* user);
@@ -50,7 +54,8 @@ public:
     void removeElement(IElement* elem);
     void undoLastCommand();
 
-    void addRule(IElement* element, const std::string& ruleName);
+    IElement* addRule(IElement* element, Rule* rule);
+    IElement* removeRule(IElement* element, Rule* rule);
     
     // Méthodes d'IObservable
     virtual void attach(User* observer) override;

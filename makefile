@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++17
 
 # Liste des fichiers sources
-SRCS = main.cpp $(wildcard ./MiniBim/*.cpp)
+SRCS = main.cpp $(wildcard ./MiniBim/*.cpp) $(wildcard ./MiniBim/Commands/*.cpp) $(wildcard ./MiniBim/Rules/*.cpp)
 
 # Nom de l'exécutable
 TARGET = tp4
@@ -29,6 +29,6 @@ $(TARGET): $(OBJS)
 
 # Nettoyer les fichiers objets et l'exécutable
 clean:
-	del /Q *.o $(TARGET).exe MiniBim\*.o
+	del /Q *.o $(TARGET).exe MiniBim\*.o MiniBim\Commands\*.o MiniBim\Rules\*.o 2>nul || exit 0
 
 .PHONY: all clean

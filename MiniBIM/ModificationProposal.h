@@ -6,7 +6,7 @@
 #include <memory>
 #include "User.h"
 #include "Project.h"
-#include "CommandManager.h"
+#include "./Commands/CommandManager.h"
 
 class Project;
 class IElement;

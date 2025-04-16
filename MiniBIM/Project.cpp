@@ -1,8 +1,8 @@
 #include "Project.h"
 #include "User.h"
 #include "Element.h"
-#include <algorithm> // std::find
-#include "RuleDecorator.h"
+#include <algorithm>
+#include "./Rules/RuleDecorator.h"
 
 Project::Project(const std::string& name)
     : name(name)
@@ -50,8 +50,15 @@ void Project::showCommandHistory() {
 
     std::cout << "Historique du projet '" << name << "' :" << std::endl;
 
-    for(auto element : commandManager.getCommandHistory()) {
-        std::cout << "  " << "[" + element->getProposalName() + "] " << element->getDescription() << std::endl;
+    for(auto command : commandManager.getCommandHistory()) {
+        std::cout << "  " << "[" + command->getProposalName() + "] " << command->getDescription() << std::endl;
+    }
+}
+
+void Project::showElements() {
+    std::cout << "Elements dans la maquette :" << std::endl;
+    for(auto element : elements) {
+        std::cout << "- " << element->getName() << " (" << element->getElementType() << ")" << std::endl;
     }
 }
 
@@ -89,24 +96,42 @@ void Project::undoLastCommand() {
     commandManager.undoLastCommand();
 }
 
-void Project::addRule(IElement* element, const std::string& ruleName) {
+IElement* Project::addRule(IElement* element, Rule* rule) {
     auto it = std::find(elements.begin(), elements.end(), element);
     if (it != elements.end()) {
-
-        IElement* decoratedElement = new RuleDecorator(element, ruleName);
-        
+        IElement* decoratedElement = new RuleDecorator(element, rule);
         *it = decoratedElement;
-        
-        std::cout << "L'element " 
-                  << decoratedElement->getElementType() 
-                  << " (" << decoratedElement->getName() 
-                  << ") est enrobe de la regle [" << ruleName << "]." << std::endl;
+
+        std::cout << "L'élément "
+                  << decoratedElement->getElementType() << " (" 
+                  << decoratedElement->getName()
+                  << ") est enrobé de la règle [" << rule->getName()
+                  << "] : " << rule->getDescription() << std::endl;
+
+        return decoratedElement;
     } else {
-        std::cout << "L'element " << element->getName() << " n'a pas ete trouve dans le project " 
-                  << name << std::endl;
+        std::cout << "Élément non trouvé dans le projet." << std::endl;
+        return nullptr;
     }
 }
 
+IElement* Project::removeRule(IElement* element, Rule* rule) {
+    auto it = std::find(elements.begin(), elements.end(), element);
+    if (it != elements.end()) {
+        RuleDecorator* decorator = dynamic_cast<RuleDecorator*>(element);
+        if (decorator && decorator->getRule() == rule) {
+            IElement* base = decorator->getBaseElement();
+            *it = base;
+
+            std::cout << "Règle [" << rule->getName() << "] retirée de l'élément " 
+                      << base->getName() << std::endl;
+            return base;
+        } else {
+            std::cout << "La règle ne correspond pas ou l'élément n'est pas un décorateur." << std::endl;
+        }
+    }
+    return nullptr;
+}
 
 void Project::attach(User* observer) {
     auto it = std::find(observers.begin(), observers.end(), observer);

@@ -10,7 +10,7 @@ CombineElementsCommand::CombineElementsCommand(Project *p, IElement *elem1, IEle
 }
 
 CombineElementsCommand::~CombineElementsCommand() {
-    delete newCombinedElement;
+    //delete newCombinedElement;
 }
 
 void CombineElementsCommand::execute()

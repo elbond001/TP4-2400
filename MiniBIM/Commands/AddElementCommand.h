@@ -2,8 +2,8 @@
 #define ADDELEMENTCOMMAND_H
 
 #include "Command.h"
-#include "Project.h"
-#include "Element.h"
+#include "../Project.h"
+#include "../Element.h"
 
 class AddElementCommand : public Command {
 private:

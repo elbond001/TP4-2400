@@ -2,8 +2,8 @@
 #define COMBINEELEMENTSCOMMAND_H
 
 #include "Command.h"
-#include "Project.h"
-#include "CompositeElement.h"
+#include "../Project.h"
+#include "../CompositeElement.h"
 
 class CombineElementsCommand : public Command
 {
