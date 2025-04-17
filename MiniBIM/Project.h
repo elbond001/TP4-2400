@@ -17,11 +17,11 @@
 class User;
 class IElement;
 
-class Project : public IObservable {  // <-- Héritage public
+class Project : public IObservable {
 private:
     std::string name;
-    std::vector<User*> users;     // Les utilisateurs du projet
-    std::vector<std::shared_ptr<IElement>> elements;  // Liste des éléments (en shared_ptr)
+    std::vector<User*> users;
+    std::vector<std::shared_ptr<IElement>> elements;
     std::vector<ModificationProposal*> proposals;
     
     CommandManager commandManager;

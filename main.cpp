@@ -16,10 +16,10 @@
 #include "./MiniBIM/Commands/DissociateElementsCommand.h"
 #include "./MiniBIM/Commands/AddRuleCommand.h"
 #include "./MiniBIM/Commands/RemoveRuleCommand.h"
-#include "./MiniBIM/Rules/ChargeRule.cpp"
-#include "./MiniBIM/Rules/IsolationRule.cpp"
-#include "./MiniBIM/Rules/CostEstimationRule.cpp"
-#include "./MiniBIM/Rules/EnergyPerformanceRule.cpp"
+#include "./MiniBIM/Rules/ChargeRule.h"
+#include "./MiniBIM/Rules/IsolationRule.h"
+#include "./MiniBIM/Rules/CostEstimationRule.h"
+#include "./MiniBIM/Rules/EnergyPerformanceRule.h"
 
 int main()
 {
