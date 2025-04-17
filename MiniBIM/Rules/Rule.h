@@ -3,14 +3,15 @@
 
 #include <string>
 #include <iostream>
-#include <memory>
-#include "../Element.h" 
+#include <memory> 
+#include "ElementDecorator.h" 
 
-class Rule : public std::enable_shared_from_this<Rule> {
+class Rule : public ElementDecorator {
 public:
+    Rule(std::shared_ptr<IElement> element) : ElementDecorator(element) {};
     virtual ~Rule() = default;
     virtual std::string getDescription() const = 0;
-    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const = 0;
+    virtual std::shared_ptr<IElement> decorate() const = 0;
 };
 
 #endif

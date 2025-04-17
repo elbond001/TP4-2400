@@ -55,8 +55,8 @@ public:
 
     std::shared_ptr<IElement> findElementByName(const std::string& name);
 
-    std::shared_ptr<IElement> addRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> rule);
-    std::shared_ptr<IElement> removeRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> rule);
+    std::shared_ptr<IElement> addRule(std::shared_ptr<Rule> rule);
+    std::shared_ptr<IElement> removeRule(std::shared_ptr<Rule> rule);
     
     virtual void attach(User* observer) override;
     virtual void detach(User* observer) override;

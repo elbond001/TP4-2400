@@ -3,7 +3,6 @@
 
 #include "../Element.h"
 #include <memory>
-#include "Rule.h"
 
 class ElementDecorator : public IElement {
     private:
@@ -14,7 +13,6 @@ class ElementDecorator : public IElement {
 
     std::string getName() const override;
     std::string getElementType() const override;
-    //void showDescription(int niveau) {};
     std::shared_ptr<IElement> getBaseElement() const;
     virtual void showDescription(int niveau) const override;
 

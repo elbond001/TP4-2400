@@ -5,12 +5,12 @@ RemoveRuleCommand::RemoveRuleCommand(Project* project, std::shared_ptr<IElement>
     : Command(project), rule(rule), decoratedElement(elementWithRule), restoredElement(nullptr) {}
 
 void RemoveRuleCommand::execute() {
-    restoredElement = project->removeRule(decoratedElement, rule);
+    restoredElement = project->removeRule(rule);
 }
 
 void RemoveRuleCommand::undo() {
     if (restoredElement != nullptr) {
-        decoratedElement = project->addRule(restoredElement, rule);
+        decoratedElement = project->addRule(rule);
     }
 }
 

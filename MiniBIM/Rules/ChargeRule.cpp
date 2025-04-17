@@ -1,12 +1,12 @@
 #ifndef CHARGERULE_H
 #define CHARGERULE_H
 
-#include "ElementDecorator.h"
+#include "Rule.h"
 
-class ChargeRule : public ElementDecorator, public Rule {
+class ChargeRule : public Rule {
 public:
     ChargeRule(std::shared_ptr<IElement> element)
-    : ElementDecorator(element) { }
+    : Rule(element) { }
     virtual~ChargeRule() {}
     virtual std::string getDescription() const override {
         return "Contrainte de charge";
@@ -15,8 +15,8 @@ public:
         std::cout << "[clone] Clonage de ChargeRule" << std::endl;
         return std::make_shared<ChargeRule>(getBaseElement()->clone());
     }
-    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const override {
-        return std::make_shared<ChargeRule>(element);
+    virtual std::shared_ptr<IElement> decorate() const override{
+        return std::make_shared<ChargeRule>(getBaseElement());
     }
     virtual void showDescription(int niveau) const override {
         std::string decalages = "";

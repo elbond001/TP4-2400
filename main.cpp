@@ -67,7 +67,7 @@ int main()
     
 
     std::shared_ptr<IsolationRule> rule1 = std::make_shared<IsolationRule>(porte1);
-    prop2.addCommand(std::make_shared<AddRuleCommand>(&alpha, porte1, rule1));
+    prop2.addCommand(std::make_shared<AddRuleCommand>(&alpha, rule1));
 
     prop2.requestValidation();
 
@@ -99,7 +99,7 @@ int main()
     ModificationProposal prop4(&beta, bob, "Charge Mur2");
 
     auto rule2 = std::make_shared<ChargeRule>(mur2);
-    prop4.addCommand(std::make_shared<AddRuleCommand>(&beta, mur2, rule2));
+    prop4.addCommand(std::make_shared<AddRuleCommand>(&beta, rule2));
 
     prop4.showCommands();
     prop4.requestValidation();
@@ -131,7 +131,7 @@ int main()
 
     ModificationProposal prop6(&alphaCopy, greg, "Estimation couts");
     std::shared_ptr<CostEstimationRule> rule3 = std::make_shared<CostEstimationRule>(alphaCopy.getElements().front());
-    prop6.addCommand(std::make_shared<AddRuleCommand>(&alphaCopy, alphaCopy.getElements().front(), rule3));
+    prop6.addCommand(std::make_shared<AddRuleCommand>(&alphaCopy, rule3));
 
     prop6.requestValidation();
 
@@ -186,7 +186,7 @@ int main()
     ModificationProposal prop8(&alpha, bob, "PerformancePlancher");
 
     auto rule4 = std::make_shared<EnergyPerformanceRule>(plancher1);
-    prop8.addCommand(std::make_shared<AddRuleCommand>(&alpha, plancher1, rule4));
+    prop8.addCommand(std::make_shared<AddRuleCommand>(&alpha, rule4));
 
     prop8.requestValidation();
 

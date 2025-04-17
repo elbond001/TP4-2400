@@ -96,13 +96,13 @@ bool Project::replaceElementInHierarchy(std::shared_ptr<IElement>& current,
     return false;
 }
 
-std::shared_ptr<IElement> Project::addRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> rule) {
-    std::shared_ptr<IElement> decoratedElement = rule->decorate(element);
+std::shared_ptr<IElement> Project::addRule(std::shared_ptr<Rule> rule) {
+    std::shared_ptr<IElement> decoratedElement = rule->decorate();
     bool replaced = false;
 
     // Remplacer dans la liste principale si présent
     for (auto& e : elements) {
-        if (e == element) {
+        if (e == rule->getBaseElement()) {
             e = decoratedElement;
             replaced = true;
         }
@@ -110,7 +110,7 @@ std::shared_ptr<IElement> Project::addRule(std::shared_ptr<IElement> element, st
 
     // Remplacer dans les compositeElements
     for (auto& e : elements) {
-        if (replaceElementInHierarchy(e, element, decoratedElement)) {
+        if (replaceElementInHierarchy(e, rule->getBaseElement(), decoratedElement)) {
             replaced = true;
         }
     }
@@ -123,8 +123,8 @@ std::shared_ptr<IElement> Project::addRule(std::shared_ptr<IElement> element, st
     return nullptr;
 }
 
-std::shared_ptr<IElement> Project::removeRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> ruleToRemove) {
-    auto it = std::find(elements.begin(), elements.end(), element);
+std::shared_ptr<IElement> Project::removeRule(std::shared_ptr<Rule> ruleToRemove) {
+    auto it = std::find(elements.begin(), elements.end(), ruleToRemove);
     if (it == elements.end()) {
         std::cout << "Element non trouvé dans le projet." << std::endl;
         return nullptr;
@@ -164,6 +164,7 @@ std::shared_ptr<IElement> Project::findElementByName(const std::string& name) {
     }
     return nullptr;
 }
+
 
 void Project::attach(User* observer) {
     if (std::find(observers.begin(), observers.end(), observer) == observers.end()) {

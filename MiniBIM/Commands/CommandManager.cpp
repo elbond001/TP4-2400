@@ -21,4 +21,3 @@ void CommandManager::undoLastCommand() {
 std::vector<std::shared_ptr<Command>> CommandManager::getCommandHistory() {
     return this->commandHistory;
 }
-

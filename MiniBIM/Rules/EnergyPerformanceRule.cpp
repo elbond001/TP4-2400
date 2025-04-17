@@ -1,12 +1,12 @@
 #ifndef ENERGYRULE_H
 #define ENERGYRULE_H
 
-#include "ElementDecorator.h"
+#include "Rule.h"
 
-class EnergyPerformanceRule : public ElementDecorator, public Rule {
+class EnergyPerformanceRule : public Rule {
 public:
 EnergyPerformanceRule(std::shared_ptr<IElement> element)
-    : ElementDecorator(element) { }
+    : Rule(element) { }
     virtual ~EnergyPerformanceRule() { }
     virtual std::string getDescription() const override {
         return "Simulation de performance energetique";
@@ -15,9 +15,9 @@ EnergyPerformanceRule(std::shared_ptr<IElement> element)
         std::cout << "[clone] Clonage de EnergyRule" << std::endl;
         return std::make_shared<EnergyPerformanceRule>(getBaseElement()->clone());
     }
-    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const override {
-        std::cout << "Regle [" << getDescription() << "] est ajoute a l'element " << element->getElementType() << " (" << element->getName() << ")" << std::endl;
-        return std::make_shared<EnergyPerformanceRule>(element);
+    virtual std::shared_ptr<IElement> decorate() const override {
+        std::cout << "Regle [" << getDescription() << "] est ajoute a l'element " << getBaseElement()->getElementType() << " (" << getBaseElement()->getName() << ")" << std::endl;
+        return std::make_shared<EnergyPerformanceRule>(getBaseElement());
     }
     virtual void showDescription(int niveau) const override {
         std::string decalages = "";
