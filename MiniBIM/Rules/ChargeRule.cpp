@@ -1,21 +1,30 @@
 #ifndef CHARGERULE_H
 #define CHARGERULE_H
 
-#include "RuleDecorator.h"
+#include "ElementDecorator.h"
 
-class ChargeRule : public RuleDecorator {
+class ChargeRule : public ElementDecorator, public Rule {
 public:
-    ChargeRule(IElement* element)
-    : RuleDecorator(element, nullptr) { }
-    virtual std ::string getName() const override { return "Contraintes de charge"; }
+    ChargeRule(std::shared_ptr<IElement> element)
+    : ElementDecorator(element) { }
+    virtual~ChargeRule() {}
     virtual std::string getDescription() const override {
-        return "Spécifie les contraintes de charge maximales.";
+        return "Contrainte de charge";
     }
-    virtual IElement* clone() const override {
-        return new ChargeRule(getBaseElement());
+    virtual std::shared_ptr<IElement> clone() const override {
+        std::cout << "[clone] Clonage de ChargeRule" << std::endl;
+        return std::make_shared<ChargeRule>(getBaseElement()->clone());
     }
-    virtual IElement* decorate(IElement* element, std::shared_ptr<Rule> self) const override {
-        return (new ChargeRule(element));
+    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const override {
+        return std::make_shared<ChargeRule>(element);
+    }
+    virtual void showDescription(int niveau) const override {
+        std::string decalages = "";
+
+        for(int i = 0; i < niveau; i++)
+            decalages += "  ";
+
+        std::cout << decalages << "- " << getElementType() << " (" << getBaseElement()->getName() << ") avec [" << getDescription() << "]" << std::endl;
     }
 };
 

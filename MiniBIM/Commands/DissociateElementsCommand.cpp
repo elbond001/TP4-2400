@@ -1,18 +1,12 @@
 #include "DissociateElementsCommand.h"
 
-DissociateElementsCommand::DissociateElementsCommand(Project* p, IElement* elemToDissociate, CompositeElement* compElem)
+DissociateElementsCommand::DissociateElementsCommand(Project* p, std::shared_ptr<IElement> elemToDissociate, std::shared_ptr<CompositeElement> compElem)
     : Command(p), dissociatedElement(elemToDissociate), compositeElement(compElem)
 {}
-
-DissociateElementsCommand::~DissociateElementsCommand() {
-    //delete dissociatedElement;
-    //delete compositeElement;
-}
 
 void DissociateElementsCommand::execute()
 {
     compositeElement->remove(dissociatedElement);
-
     project->addElement(dissociatedElement);
 }
 
@@ -23,5 +17,5 @@ void DissociateElementsCommand::undo()
 }
 
 std::string DissociateElementsCommand::getDescription() {
-    return ("Dissociation de : " + dissociatedElement->getElementType() + " depuis " + "(" + compositeElement->getName() + ")");
+    return "Dissociation de : " + dissociatedElement->getElementType() + " depuis : (" + compositeElement->getName() + ")";
 }

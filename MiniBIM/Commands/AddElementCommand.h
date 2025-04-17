@@ -7,9 +7,9 @@
 
 class AddElementCommand : public Command {
 private:
-    IElement* element;
+    std::shared_ptr<IElement> element;
 public:
-    AddElementCommand(Project* p, IElement* elem);
+    AddElementCommand(Project* p, std::shared_ptr<IElement> elem);
     virtual ~AddElementCommand();
     virtual void execute() override;
     virtual void undo() override;

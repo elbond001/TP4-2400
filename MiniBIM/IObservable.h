@@ -3,7 +3,7 @@
 
 #include <string>
 
-class User; // forward declaration
+class User;
 
 class IObservable {
 public:

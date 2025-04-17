@@ -1,22 +1,30 @@
 #ifndef ISOLATIONRULE_H
 #define ISOLATIONRULE_H
 
-#include "RuleDecorator.h"
+#include "ElementDecorator.h"
 
-class IsolationRule : public RuleDecorator {
+class IsolationRule : public ElementDecorator, public Rule {
 public:
-    IsolationRule(IElement* element)
-    : RuleDecorator(element, nullptr) { }
+    IsolationRule(std::shared_ptr<IElement> element)
+    : ElementDecorator(element) { }
     virtual ~IsolationRule() { }
-    virtual std::string getName() const override { return "Isolation"; }
     virtual std::string getDescription() const override {
-        return "Ameliore les performances thermiques.";
+        return "Isolation";
     }
-    virtual IElement* decorate(IElement* element, std::shared_ptr<Rule> self) const override{
-        return new IsolationRule(element);
+    
+    virtual std::shared_ptr<IElement> clone() const override {
+        return std::make_shared<IsolationRule>(getBaseElement()->clone());
     }
-    virtual IElement* clone() const override {
-        return new IsolationRule(getBaseElement());
+    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const override{
+        return std::make_shared<IsolationRule>(element);
+    }
+    virtual void showDescription(int niveau) const override {
+        std::string decalages = "";
+
+        for(int i = 0; i < niveau; i++)
+            decalages += "  ";
+
+        std::cout << decalages << "- " << getElementType() << " (" << getBaseElement()->getName() << ") avec [" << getDescription() << "]" << std::endl;
     }
 };
 

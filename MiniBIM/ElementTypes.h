@@ -22,8 +22,16 @@ class Wall : public IElement {
         virtual std::string getElementType() const override {
             return "Wall";
         }
-        virtual IElement* clone() const override {
-            return new Wall(name);
+        virtual void showDescription(int niveau) const override {
+            std::string decalages = "";
+
+            for(int i = 0; i < niveau; i++)
+                decalages += "  ";
+
+            std::cout << decalages << "- " << getElementType() << " (" << name << ")" << std::endl;
+        }
+        virtual std::shared_ptr<IElement> clone() const override {
+            return std::make_shared<Wall>(name);
         }
     };
     
@@ -43,8 +51,16 @@ class Wall : public IElement {
         virtual std::string getElementType() const override {
             return "Door";
         }
-        virtual IElement* clone() const override {
-            return new Door(name);
+        virtual void showDescription(int niveau) const override {
+            std::string decalages = "";
+
+            for(int i = 0; i < niveau; i++)
+                decalages += "  ";
+
+            std::cout << decalages << "- " << getElementType() << " (" << name << ")" << std::endl;
+        }
+        virtual std::shared_ptr<IElement> clone() const override {
+            return std::make_shared<Door>(name);
         }
     };
     
@@ -64,11 +80,20 @@ class Wall : public IElement {
         virtual std::string getElementType() const override {
             return "Window";
         }
-        virtual IElement* clone() const override {
-            return new Window(name);
+        virtual void showDescription(int niveau) const override {
+            std::string decalages = "";
+
+            for(int i = 0; i < niveau; i++)
+                decalages += "  ";
+
+            std::cout << decalages << "- " << getElementType() << " (" << name << ")" << std::endl;
+        }
+        virtual std::shared_ptr<IElement> clone() const override {
+            return std::make_shared<Window>(name);
         }
     };
 
+    // ================== Heating Floor ==================
     class HeatingFloor : public IElement {
         private:
             std::string name;
@@ -82,10 +107,18 @@ class Wall : public IElement {
                 return name;
             }
             virtual std::string getElementType() const override {
-                return "Plancher chauffant";
+                return "Heating Floor";
             }
-            virtual IElement* clone() const override {
-                return new HeatingFloor(name);
+            virtual void showDescription(int niveau) const override {
+                std::string decalages = "";
+    
+                for(int i = 0; i < niveau; i++)
+                    decalages += "  ";
+    
+                std::cout << decalages << "- " << getElementType() << " (" << name << ")" << std::endl;
+            }
+            virtual std::shared_ptr<IElement> clone() const override {
+                return std::make_shared<HeatingFloor>(name);
             }
         };
 

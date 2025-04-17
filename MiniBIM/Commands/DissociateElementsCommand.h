@@ -4,16 +4,16 @@
 #include "Command.h"
 #include "../Project.h"
 #include "../CompositeElement.h"
+#include <memory>
 
 class DissociateElementsCommand : public Command
 {
 private:
-    IElement * dissociatedElement;
-    CompositeElement *compositeElement;
+    std::shared_ptr<IElement> dissociatedElement;
+    std::shared_ptr<CompositeElement> compositeElement;
 
 public:
-    DissociateElementsCommand(Project *p, IElement* elemToDissociate, CompositeElement *compElem);
-    virtual ~DissociateElementsCommand();
+    DissociateElementsCommand(Project* p, std::shared_ptr<IElement> elemToDissociate, std::shared_ptr<CompositeElement> compElem);
     virtual void execute() override;
     virtual void undo() override;
 

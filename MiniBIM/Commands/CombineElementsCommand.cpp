@@ -1,16 +1,15 @@
 #include "CombineElementsCommand.h"
 
-CombineElementsCommand::CombineElementsCommand(Project *p, IElement *elem1, IElement *elem2, CompositeElement* compositeElem)
+CombineElementsCommand::CombineElementsCommand(Project* p, 
+                                               std::shared_ptr<IElement> elem1, 
+                                               std::shared_ptr<IElement> elem2, 
+                                               std::shared_ptr<CompositeElement> compositeElem)
     : Command(p), element1(elem1), element2(elem2), newCombinedElement(compositeElem)
 {
     newCombinedElement->add(element1);
     newCombinedElement->add(element2);
 
     combineElementsName = newCombinedElement->getName();
-}
-
-CombineElementsCommand::~CombineElementsCommand() {
-    //delete newCombinedElement;
 }
 
 void CombineElementsCommand::execute()
@@ -27,9 +26,11 @@ void CombineElementsCommand::undo()
 {
     project->addElement(element1);
     project->addElement(element2);
+
+    project->removeElement(newCombinedElement);
 }
 
 std::string CombineElementsCommand::getDescription()
 {
-    return ("Combinaison en : " + combineElementsName);
+    return "Combinaison en : " + combineElementsName;
 }

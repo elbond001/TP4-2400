@@ -1,7 +1,7 @@
 #include "RemoveRuleCommand.h"
 #include "../Project.h"
 
-RemoveRuleCommand::RemoveRuleCommand(Project* project, IElement* elementWithRule, Rule* rule)
+RemoveRuleCommand::RemoveRuleCommand(Project* project, std::shared_ptr<IElement> elementWithRule, std::shared_ptr<Rule> rule)
     : Command(project), rule(rule), decoratedElement(elementWithRule), restoredElement(nullptr) {}
 
 void RemoveRuleCommand::execute() {
@@ -15,5 +15,5 @@ void RemoveRuleCommand::undo() {
 }
 
 std::string RemoveRuleCommand::getDescription() {
-    return ("Retrait de : " + rule->getName() + " a " + decoratedElement->getName());
+    return ("Retrait de : " + rule->getDescription() + " a " + decoratedElement->getName());
 }

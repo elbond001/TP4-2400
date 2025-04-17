@@ -4,13 +4,14 @@
 #include "Command.h"
 #include "../Project.h"
 #include "../Element.h"
+#include <memory>
 
 class DeleteElementCommand : public Command {
 private:
-    IElement* element;
+    std::shared_ptr<IElement> element;
+
 public:
-    DeleteElementCommand(Project* p, IElement* elem);
-    virtual ~DeleteElementCommand();
+    DeleteElementCommand(Project* p, std::shared_ptr<IElement> elem);
     virtual void execute() override;
     virtual void undo() override;
     virtual std::string getDescription() override;

@@ -1,30 +1,28 @@
 #include "CompositeElement.h"
 #include <sstream>
+#include <algorithm>
+#include <iostream>
 
-CompositeElement::CompositeElement(const std::string &name)
+CompositeElement::CompositeElement(const std::string& name)
     : name(name)
-{
-}
+{}
 
 CompositeElement::~CompositeElement()
 {
-    // Ici, on ne supprime pas les composants si nous ne sommes pas propriétaires
+    // Rien à supprimer manuellement grâce à shared_ptr
 }
 
-void CompositeElement::add(IElement *element)
+void CompositeElement::add(std::shared_ptr<IElement> element)
 {
     components.push_back(element);
 }
 
-void CompositeElement::remove(IElement *element)
+void CompositeElement::remove(std::shared_ptr<IElement> element)
 {
-    for (auto it = components.begin(); it != components.end(); ++it)
+    auto it = std::find(components.begin(), components.end(), element);
+    if (it != components.end())
     {
-        if (*it == element)
-        {
-            components.erase(it);
-            break;
-        }
+        components.erase(it);
     }
 }
 
@@ -35,21 +33,35 @@ std::string CompositeElement::getName() const
 
 std::string CompositeElement::getElementType() const
 {
-    // On peut indiquer que cet élément est une combinaison
-    return "Composite";
+    return "Combinaison";
 }
 
-IElement* CompositeElement::clone() const {
-    CompositeElement* copy = new CompositeElement(name);
+void CompositeElement::showDescription(int niveau) const 
+{
+    std::string decalages = "";
 
-    for (IElement* component : components) {
-        copy->add(component->clone());
+    for(int i = 0; i < niveau; i++)
+        decalages += "  ";
+
+    std::cout << decalages << "- " << getElementType() << " (" << name << ")" << std::endl;
+
+    for(std::shared_ptr<IElement> e : components)
+    {
+        e->showDescription(niveau + 1);
+    }
+}
+
+std::shared_ptr<IElement> CompositeElement::clone() const {
+    auto copy = std::make_shared<CompositeElement>(name);
+
+    for (const auto& component : components) {
+        copy->add(std::shared_ptr<IElement>(component->clone()));
     }
 
     return copy;
 }
 
-std::vector<IElement *> CompositeElement::getComponents()
+std::vector<std::shared_ptr<IElement>> CompositeElement::getComponents()
 {
     return components;
 }

@@ -4,21 +4,24 @@
 #include "Command.h"
 #include "../Project.h"
 #include "../CompositeElement.h"
+#include <memory>
 
 class CombineElementsCommand : public Command
 {
 private:
-    IElement *element1;
-    IElement *element2;
-    CompositeElement *newCombinedElement;
+    std::shared_ptr<IElement> element1;
+    std::shared_ptr<IElement> element2;
+    std::shared_ptr<CompositeElement> newCombinedElement;
     std::string combineElementsName;
 
 public:
-    CombineElementsCommand(Project* p, IElement* elem1, IElement* elem2, CompositeElement* compositeElem);
-    virtual ~CombineElementsCommand();
+    CombineElementsCommand(Project* p, 
+                           std::shared_ptr<IElement> elem1, 
+                           std::shared_ptr<IElement> elem2, 
+                           std::shared_ptr<CompositeElement> compositeElem);
+    
     virtual void execute() override;
     virtual void undo() override;
-
     virtual std::string getDescription() override;
 };
 

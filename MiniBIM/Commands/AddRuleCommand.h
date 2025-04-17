@@ -5,12 +5,12 @@
 
 class AddRuleCommand : public Command {
 private:
-    Rule* rule;
-    IElement* originalElement;
-    IElement* decoratedElement;
+    std::shared_ptr<Rule> rule;
+    std::shared_ptr<IElement> originalElement;
+    std::shared_ptr<IElement> decoratedElement;
 
 public:
-    AddRuleCommand(Project* project, IElement* elem, Rule* rule);
+    AddRuleCommand(Project* project, std::shared_ptr<IElement> elem, std::shared_ptr<Rule> rule);
 
     void execute() override;
     void undo() override;

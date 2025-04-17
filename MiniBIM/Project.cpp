@@ -2,7 +2,8 @@
 #include "User.h"
 #include "Element.h"
 #include <algorithm>
-#include "./Rules/RuleDecorator.h"
+#include "./Rules/ElementDecorator.h"
+#include "CompositeElement.h"
 
 Project::Project(const std::string& name)
     : name(name)
@@ -13,70 +14,43 @@ Project::Project(const std::string& name)
 Project::Project(const Project& projet, const std::string& name)
 {
     this->name = name;
-    //this->observers = projet.getObservers();
-
     std::cout << "Projet " << name << " est cree par copie" << std::endl;
-    //Creation d'une copie profonde elements
-    for (IElement* elem : projet.getElements()) {
-        elements.push_back(elem->clone());
+
+    for (const auto& elem : projet.getElements()) {
+        elements.push_back(std::shared_ptr<IElement>(elem->clone()));
     }
-
-    //commandManager = CommandManager(projet.commandManager);
 }
 
-const std::string& Project::getName() const {
-    return name;
-}
+const std::string& Project::getName() const { return name; }
 
-const std::vector<User*>& Project::getUsers() const {
-    return users;
-}
+const std::vector<User*>& Project::getUsers() const { return users; }
 
-const std::vector<IElement*> Project::getElements() const {
-    return elements;
-}
+const std::vector<std::shared_ptr<IElement>>& Project::getElements() const { return elements; }
 
-const std::vector<User*> Project::getObservers() const {
-    return observers;
-}
+const std::vector<User*> Project::getObservers() const { return observers; }
 
-std::vector<ModificationProposal*>* Project::getProposals() {
-    return &proposals;
-}
+std::vector<ModificationProposal*>* Project::getProposals() { return &proposals; }
 
-CommandManager* Project::getCommandManager() {
-    return &commandManager;
-}
-
-
+CommandManager* Project::getCommandManager() { return &commandManager; }
 
 void Project::showCommandHistory() {
-
     std::cout << "Historique du projet '" << name << "' :" << std::endl;
-
-    for(auto command : commandManager.getCommandHistory()) {
-        std::cout << "  " << "[" + command->getProposalName() + "] " << command->getDescription() << std::endl;
+    for (auto command : commandManager.getCommandHistory()) {
+        std::cout << "  [" << command->getProposalName() << "] " << command->getDescription() << std::endl;
     }
 }
 
 void Project::showElements() {
     std::cout << "Elements dans la maquette :" << std::endl;
-    for (IElement* element : elements) {
-        if(RuleDecorator* rd = dynamic_cast<RuleDecorator*>(element))
-            std::cout << "- " << rd->getBaseElement()->getName() << " (" << rd->getElementType() << ") avec [" << rd->getName() << "]"  << std::endl;
-        else
-            std::cout << "- " << element->getName() << " (" << element->getElementType() << ")" << std::endl;
+    for (const auto& element : elements) {
+        element->showDescription(0);
     }
 }
 
 void Project::addUser(User* user) {
     users.push_back(user);
-
     attach(user);
-    std::cout << user->getName() 
-        << " est ajoute au projet " 
-        << this->name 
-        << std::endl;
+    std::cout << user->getName() << " est ajoute au projet " << this->name << std::endl;
 }
 
 void Project::removeUser(User* user) {
@@ -84,69 +58,115 @@ void Project::removeUser(User* user) {
     if (it != users.end()) {
         users.erase(it);
     }
-
     detach(user);
 }
 
-void Project::addElement(IElement* element) {
-    elements.push_back(element);
+void Project::addElement(std::shared_ptr<IElement> element) {
+    if (std::find(elements.begin(), elements.end(), element) == elements.end()) {
+        elements.push_back(element);
+    }
 }
 
-void Project::removeElement(IElement* element) {
-    auto it = std::find(elements.begin(), elements.end(), element);
-    if (it != elements.end()) {
-        elements.erase(it);
-    }
+void Project::removeElement(std::shared_ptr<IElement> element) {
+    elements.erase(std::remove(elements.begin(), elements.end(), element), elements.end());
 }
 
 void Project::undoLastCommand() {
     commandManager.undoLastCommand();
 }
 
-IElement* Project::addRule(IElement* element, Rule* rule) {
-    auto it = std::find(elements.begin(), elements.end(), element);
-    if (it != elements.end()) {
-        std::shared_ptr<Rule> rulePtr(rule, [](Rule*){});  // convertit le Rule* en shared_ptr
-        IElement* decoratedElement = rule->decorate(element, rulePtr);
-        *it = decoratedElement;
-
-        std::cout << "Regle [" << rule->getName() << "] est ajoute a l'element " 
-                  << element->getElementType() << " (" << element->getName() << ") !" << std::endl;
-
-        return decoratedElement;
-    } else {
-        std::cout << "Element non trouve dans le projet." << std::endl;
-        return nullptr;
+bool Project::replaceElementInHierarchy(std::shared_ptr<IElement>& current,
+                                        std::shared_ptr<IElement> target,
+                                        std::shared_ptr<IElement> replacement)
+{
+    if (current == target) {
+        current = replacement;
+        return true;
     }
-}
 
-IElement* Project::removeRule(IElement* element, Rule* rule) {
-    auto it = std::find(elements.begin(), elements.end(), element);
-    if (it != elements.end()) {
-        RuleDecorator* decorator = dynamic_cast<RuleDecorator*>(element);
-        if (decorator && decorator->getRule() && typeid(*decorator->getRule()) == typeid(*rule)) {
-        //if (decorator && decorator->getRule() && decorator->getRule()->getName() == rule->getName()) {
-            IElement* base = decorator->getBaseElement();
-            *it = base;
-
-            return base;
-        } else {
-            std::cout << "La regle ne correspond pas ou l'element n'est pas un decorateur." << std::endl;
+    if (auto composite = std::dynamic_pointer_cast<CompositeElement>(current)) {
+        auto children = composite->getComponents();
+        for (auto child : children) {
+            if (replaceElementInHierarchy(child, target, replacement)) {
+                return true;
+            }
         }
     }
+
+    return false;
+}
+
+std::shared_ptr<IElement> Project::addRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> rule) {
+    std::shared_ptr<IElement> decoratedElement = rule->decorate(element);
+    bool replaced = false;
+
+    // Remplacer dans la liste principale si présent
+    for (auto& e : elements) {
+        if (e == element) {
+            e = decoratedElement;
+            replaced = true;
+        }
+    }
+
+    // Remplacer dans les compositeElements
+    for (auto& e : elements) {
+        if (replaceElementInHierarchy(e, element, decoratedElement)) {
+            replaced = true;
+        }
+    }
+
+    if (replaced) {
+        return decoratedElement;
+    }
+
+    std::cout << "Element non trouve dans le projet." << std::endl;
     return nullptr;
 }
 
-IElement* Project::findElementByName(const std::string& name) {
-    for (IElement* el : elements) {
+std::shared_ptr<IElement> Project::removeRule(std::shared_ptr<IElement> element, std::shared_ptr<Rule> ruleToRemove) {
+    auto it = std::find(elements.begin(), elements.end(), element);
+    if (it == elements.end()) {
+        std::cout << "Element non trouvé dans le projet." << std::endl;
+        return nullptr;
+    }
+
+    std::shared_ptr<IElement> current = *it;
+    std::shared_ptr<ElementDecorator> previousDecorator = nullptr;
+
+    while (auto decorator = std::dynamic_pointer_cast<ElementDecorator>(current)) {
+        auto rule = std::dynamic_pointer_cast<Rule>(decorator);
+        if (rule && rule->getDescription() == ruleToRemove->getDescription()) {
+            std::shared_ptr<IElement> newBase = decorator->getBaseElement();
+
+            if (previousDecorator) {
+                previousDecorator->setBaseElement(newBase);
+            } else {
+                *it = newBase;
+            }
+
+            std::cout << "Regle [" << rule->getDescription() << "] retiree de l'element "
+                      << newBase->getElementType() << " (" << newBase->getName() << ") !" << std::endl;
+
+            return newBase;
+        }
+
+        previousDecorator = decorator;
+        current = decorator->getBaseElement();
+    }
+
+    std::cout << "La regle n'a pas ete trouvee parmi les decorateurs." << std::endl;
+    return nullptr;
+}
+
+std::shared_ptr<IElement> Project::findElementByName(const std::string& name) {
+    for (const auto& el : elements) {
         if (el->getName() == name) return el;
     }
     return nullptr;
 }
 
 void Project::attach(User* observer) {
-    auto it = std::find(observers.begin(), observers.end(), observer);
-    if (it == observers.end()) {
+    if (std::find(observers.begin(), observers.end(), observer) == observers.end()) {
         observers.push_back(observer);
     }
 }

@@ -4,6 +4,8 @@ CXX = g++
 # Options de compilation
 CXXFLAGS = -Wall -std=c++17
 
+CXXFLAGS_DEBUG = -Wall -std=c++17 -g
+
 # Liste des fichiers sources
 SRCS = main.cpp $(wildcard ./MiniBim/*.cpp) $(wildcard ./MiniBim/Commands/*.cpp) $(wildcard ./MiniBim/Rules/*.cpp)
 

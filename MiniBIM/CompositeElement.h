@@ -4,29 +4,28 @@
 #include "Element.h"
 #include <vector>
 #include <string>
+#include <memory>
 
 // Un élément composite qui peut contenir d'autres éléments (simples ou composites)
 class CompositeElement : public IElement
 {
 private:
     std::string name;
-    std::vector<IElement *> components;
+    std::vector<std::shared_ptr<IElement>> components;
 
 public:
-    CompositeElement(const std::string &name);
+    CompositeElement(const std::string& name);
     virtual ~CompositeElement();
 
-    // Ajoute ou retire un composant
-    void add(IElement *element);
-    void remove(IElement *element);
+    void add(std::shared_ptr<IElement> element);
+    void remove(std::shared_ptr<IElement> element);
 
-    // Pour l'affichage, on renvoie par exemple le nom du composite
     virtual std::string getName() const override;
-    // On peut renvoyer "Composite" ou le type voulu
     virtual std::string getElementType() const override;
-    virtual IElement* clone() const override;
+    virtual void showDescription(int niveau) const override;
+    virtual std::shared_ptr<IElement> clone() const override;
 
-    std::vector<IElement*> getComponents();
+    std::vector<std::shared_ptr<IElement>> getComponents();
 };
 
 #endif

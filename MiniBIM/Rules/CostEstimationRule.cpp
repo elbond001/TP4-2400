@@ -1,22 +1,30 @@
 #ifndef COSTRULE_H
 #define COSTRULE_H
 
-#include "RuleDecorator.h"
+#include "ElementDecorator.h"
 
-class CostEstimationRule : public RuleDecorator {
+class CostEstimationRule : public ElementDecorator, public Rule {
 public:
-    CostEstimationRule(IElement* element)
-    : RuleDecorator(element, nullptr) { }
+    CostEstimationRule(std::shared_ptr<IElement> element)
+    : ElementDecorator(element) { }
     virtual ~CostEstimationRule() { }
-    virtual std::string getName() const override { return "Estimation des couts"; }
     virtual std::string getDescription() const override {
-        return "Cout estimé : $$$";
+        return "Estimation des couts";
     }
-    virtual IElement* clone() const override {
-        return new CostEstimationRule(getBaseElement());
+    virtual std::shared_ptr<IElement> clone() const override {
+        std::cout << "[clone] Clonage de CostRule" << std::endl;
+        return std::make_shared<CostEstimationRule>(getBaseElement()->clone());
     }
-    virtual IElement* decorate(IElement* element, std::shared_ptr<Rule> self) const override {
-        return new CostEstimationRule(element);
+    virtual std::shared_ptr<IElement> decorate(std::shared_ptr<IElement> element) const override {
+        return std::make_shared<CostEstimationRule>(element);
+    }
+    virtual void showDescription(int niveau) const override {
+        std::string decalages = "";
+
+        for(int i = 0; i < niveau; i++)
+            decalages += "  ";
+
+        std::cout << decalages << "- " << getElementType() << " (" << getBaseElement()->getName() << ") avec [" << getDescription() << "]" << std::endl;
     }
 };
 

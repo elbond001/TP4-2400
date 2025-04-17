@@ -1,6 +1,6 @@
 #include "AddElementCommand.h"
 
-AddElementCommand::AddElementCommand(Project* p, IElement* elem)
+AddElementCommand::AddElementCommand(Project* p, std::shared_ptr<IElement> elem)
 : Command(p), element(elem) 
 {}
 
