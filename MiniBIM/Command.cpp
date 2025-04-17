@@ -1,5 +1,9 @@
 #include "Command.h"
 
+Command::Command(Project* p)
+: project(p) 
+{}
+
 void Command::setCommandProposalName(const std::string& name) {
     commandProposalName = name;
 }

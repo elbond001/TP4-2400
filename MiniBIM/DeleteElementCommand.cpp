@@ -2,8 +2,8 @@
 #include <iostream>
 #include <algorithm>
 
-DeleteElementCommand::DeleteElementCommand(IElement* elem)
-: element(elem)
+DeleteElementCommand::DeleteElementCommand(Project* p, IElement* elem)
+: Command(p), element(elem) 
 {}
 
 DeleteElementCommand::~DeleteElementCommand() {

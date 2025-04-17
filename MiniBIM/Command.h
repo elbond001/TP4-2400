@@ -12,7 +12,7 @@ protected:
     Project* project;
 
 public:
-    //Command();
+    Command(Project* p);
     virtual ~Command() {}
     virtual void execute() = 0;
     virtual void undo() = 0;

@@ -34,9 +34,9 @@ int main() {
     Door porte2("Porte2");
     
     ModificationProposal prop1(&alpha, bob, "PropositionAlpha");
-    prop1.addCommand(std::make_shared<AddElementCommand>(&mur1));
-    prop1.addCommand(std::make_shared<AddElementCommand>(&porte1));
-    prop1.addCommand(std::make_shared<AddElementCommand>(&porte2));
+    prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &mur1));
+    prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte1));
+    prop1.addCommand(std::make_shared<AddElementCommand>(&alpha, &porte2));
 
     alpha.showCommandHistory();
 

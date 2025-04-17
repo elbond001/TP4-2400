@@ -9,7 +9,7 @@ class AddElementCommand : public Command {
 private:
     IElement* element;
 public:
-    AddElementCommand(IElement* elem);
+    AddElementCommand(Project* p, IElement* elem);
     virtual ~AddElementCommand();
     virtual void execute() override;
     virtual void undo() override;

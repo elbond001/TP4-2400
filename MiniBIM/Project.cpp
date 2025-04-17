@@ -73,7 +73,7 @@ void Project::removeUser(User* user) {
 }
 
 void Project::addElement(IElement* element) {
-    this->elements.push_back(element);
+    elements.push_back(element);
 }
 
 void Project::removeElement(IElement* element) {
@@ -104,9 +104,8 @@ void Project::addRule(IElement* element, const std::string& ruleName) {
                   << name << std::endl;
     }
 }
-// ========================
-// Méthodes IObservable
-// ========================
+
+
 void Project::attach(User* observer) {
     auto it = std::find(observers.begin(), observers.end(), observer);
     if (it == observers.end()) {

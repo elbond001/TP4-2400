@@ -9,7 +9,7 @@ class DeleteElementCommand : public Command {
 private:
     IElement* element;
 public:
-    DeleteElementCommand(IElement* elem);
+    DeleteElementCommand(Project* p, IElement* elem);
     virtual ~DeleteElementCommand();
     virtual void execute() override;
     virtual void undo() override;

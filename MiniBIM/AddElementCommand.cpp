@@ -1,7 +1,7 @@
 #include "AddElementCommand.h"
 
-AddElementCommand::AddElementCommand(IElement* elem)
-: element(elem)
+AddElementCommand::AddElementCommand(Project* p, IElement* elem)
+: Command(p), element(elem) 
 {}
 
 AddElementCommand::~AddElementCommand() {

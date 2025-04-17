@@ -7,6 +7,7 @@ ModificationProposal::ModificationProposal(Project* proj, User* sub, const std::
 }
 
 void ModificationProposal::addCommand(std::shared_ptr<Command> command) {
+    command->setCommandProposalName(title);
     commandList.push_back(command);
 }
 
@@ -26,7 +27,9 @@ void ModificationProposal::accept(User* manager) {
                        + project->getName() + ".");
 
      for (std::shared_ptr<Command> cmd : commandList)
+     {
         project->getCommandManager()->executeCommand(cmd);
+     }
     
     status = ProposalStatus::ACCEPTED;
 }
